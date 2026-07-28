@@ -1,0 +1,34 @@
+[
+  { 
+    "categoryName": "Programming", 
+    "skills": ["Python", "JavaScript", "C/C++", "Dart", "HTML/CSS", "PHP"] 
+  },
+  { 
+    "categoryName": "Web Development", 
+    "skills": ["MERN Stack", "React.js", "Next.js", "Svelte", "SvelteKit", "Node.js", "Express", "FastAPI", "REST APIs", "Socket.io", "WebSockets"] 
+  },
+  { 
+    "categoryName": "Mobile & Apps", 
+    "skills": ["Flutter", "Cross-Platform Apps"] 
+  },
+  { 
+    "categoryName": "Data & Databases", 
+    "skills": ["MySQL", "MongoDB", "PostgreSQL", "PostGIS", "Firebase", "Redis", "Data Analysis"] 
+  },
+  { 
+    "categoryName": "AI & Machine Learning", 
+    "skills": ["Machine Learning", "Neural Networks", "Computer Vision", "YOLO", "MediaPipe", "NLP", "Transformers", "TensorFlow/PyTorch", "AI System Design", "Google AI Studio", "AI Agents"] 
+  },
+  { 
+    "categoryName": "Hardware & Robotics", 
+    "skills": ["IoT & Embedded Systems", "Arduino Mega", "ESP32", "Raspberry Pi", "Sensors", "Robotics Automation"] 
+  },
+  { 
+    "categoryName": "Architecture & Tools", 
+    "skills": ["Enterprise Architecture", "TOGAF ADM", "ArchiMate", "Chrome Extension API", "Docker", "Celery", "Figma", "UI/UX", "API Integration", "IBM Cloud"] 
+  },
+  {
+    "categoryName": "Soft Skills & Management",
+    "skills": ["Project Management", "Agile", "Team Leadership", "Strategic Problem-Solving", "Public Speaking", "Adaptability", "Rapid Prototyping"]
+  }
+]

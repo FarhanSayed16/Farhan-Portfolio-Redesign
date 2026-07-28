@@ -1,0 +1,17 @@
+{
+  "name": "Farhan Sayed",
+  "tagline": "AI & FULL-STACK ENGINEER",
+  "taglineShort": "Building intelligent systems for real-world problems",
+  "roles": ["AI & Robotics Developer", "Full-Stack Engineer", "Enterprise Architect", "Problem Solver"],
+  "location": "Mumbai, India",
+  "availability": "Available for opportunities",
+  "profileImage": "/images/farhan.jpeg",
+  "resumeUrl": "/resume.pdf",
+  "metaDescription": "Portfolio of Farhan Sayed — AI & Robotics Developer building intelligent systems for real-world problems. Smart India Hackathon 2025 Winner.",
+  "socialLinks": {
+    "email": "farhanbuilds16@gmail.com",
+    "personalEmail": "farhansaye54@gmail.com",
+    "github": "https://github.com/FarhanSayed16",
+    "linkedin": "https://www.linkedin.com/in/farhansayed16/"
+  }
+}

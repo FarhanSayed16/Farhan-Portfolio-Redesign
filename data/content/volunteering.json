@@ -1,0 +1,26 @@
+[
+  {
+    "role": "President",
+    "organization": "Computer Society of India (CSI)",
+    "duration": "2023 - 2024",
+    "description": "Led an official student branch of 120+ active members. Directed technical workshops, hackathons, and guest lectures to bridge the gap between academia and industry."
+  },
+  {
+    "role": "Graphic Designer Head",
+    "organization": "TechVista Applications",
+    "duration": "2024 - Present",
+    "description": "Managed the visual identity, UI concepts, and marketing materials for TechVista's software products, ensuring cohesive design language."
+  },
+  {
+    "role": "Junior Editor",
+    "organization": "The V-Tech",
+    "duration": "Nov 2022 - Aug 2023",
+    "description": "Edited and curated technical articles for the official collegiate magazine, focusing on emerging tech trends."
+  },
+  {
+    "role": "Student Member",
+    "organization": "IEEE",
+    "duration": "2023 - Present",
+    "description": "Active participant in the local IEEE chapter, attending regional conferences on Robotics and AI advancement."
+  }
+]
