@@ -1,0 +1,278 @@
+/* ═══════════════════════════════════════════════════════════════
+   Farhan's World — Design System
+   Nokia tokens on :root · Windows XP Luna under [data-theme="xp"]
+   ═══════════════════════════════════════════════════════════════ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Neutral / phone backdrop (not Luna — phone keeps its own surface) */
+  --os-bg: #1a1a2e;
+  --os-taskbar: #111827;
+  --os-window: #e0e0e0;
+  --os-window-body: #ffffff;
+  --os-title-active: #0a246a;
+  --os-title-inactive: #7a96df;
+  --os-border: #808080;
+  --os-button: #ece9d8;
+  --os-button-hover: #f5f2e5;
+  --os-highlight: #316ac5;
+  --os-start-green: #3c8a3c;
+
+  --cyan: #316ac5;
+  --violet: #7c3aed;
+  --gold: #c4a000;
+  --text: #000000;
+  --text-muted: #404040;
+
+  --nokia-green: #43d97c;
+  --nokia-body: #2c2c3a;
+  --nokia-screen: #1a2e1a;
+
+  --game-sky: #5c94fc;
+  --game-ground: #c84c0c;
+
+  --taskbar-height: 30px;
+  --font-os: Tahoma, 'Segoe UI', 'MS Sans Serif', sans-serif;
+}
+
+/* ── Windows XP Luna ───────────────────────────────────────── */
+  [data-theme='xp'] {
+  --os-bg: #245edc;
+  --os-wallpaper-top: #1e4db7;
+  --os-wallpaper-mid: #3a7bd5;
+  --os-wallpaper-bot: #5b9bd5;
+  --os-taskbar: linear-gradient(180deg, #1e52b5 0%, #245edc 8%, #4993e6 50%, #245edc 100%);
+  --os-taskbar-solid: #245edc;
+  --os-window: #ece9d8;
+  --os-window-body: #ffffff;
+  --os-title-active: linear-gradient(180deg, #0a246a 0%, #a6caf0 100%);
+  --os-title-inactive: linear-gradient(180deg, #7a96df 0%, #aab9e1 100%);
+  --os-border: #0054e3;
+  --os-border-light: #ffffff;
+  --os-border-dark: #404040;
+  --os-border-darker: #0a246a;
+  --os-button: #ece9d8;
+  --os-button-hover: #f8f5ea;
+  --os-highlight: #316ac5;
+  --os-start-green-top: #5eba5e;
+  --os-start-green: #3c8a3c;
+  --os-start-green-bot: #2d6b2d;
+  --os-tray: #0e9aef;
+  --cyan: #316ac5;
+  --violet: #0054e3;
+  --gold: #c4a000;
+  --text: #000000;
+  --text-muted: #404040;
+  --taskbar-height: 30px;
+  cursor: url('/cursors/xp-arrow.png') 1 1, auto;
+}
+
+  [data-theme='xp'] a,
+  [data-theme='xp'] button,
+  [data-theme='xp'] [role='button'] {
+    cursor: url('/cursors/xp-arrow.png') 1 1, pointer;
+  }
+
+[data-theme='nokia'] {
+  --os-bg: #12121c;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --cyan: #43d97c;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--os-bg);
+    color: var(--text);
+    font-family: var(--font-os), system-ui, sans-serif;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+  }
+
+  [data-theme='xp'] {
+    font-family: var(--font-os), system-ui, sans-serif;
+  }
+
+  ::selection {
+    background: var(--os-highlight);
+    color: #fff;
+  }
+
+  [data-theme='xp'] ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  [data-theme='xp'] ::-webkit-scrollbar-track {
+    background: #fff;
+    border-left: 1px solid #dfdfdf;
+  }
+
+  [data-theme='xp'] ::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border: 2px solid #fff;
+    box-shadow:
+      inset 1px 1px 0 #fff,
+      inset -1px -1px 0 #808080;
+  }
+
+  [data-theme='xp'] ::-webkit-scrollbar-button {
+    background: #c0c0c0;
+    border: 1px solid #808080;
+    height: 16px;
+    width: 16px;
+  }
+
+  [data-theme='xp'] a {
+    color: #0066cc;
+    text-decoration: underline;
+  }
+
+  [data-theme='xp'] a:hover {
+    color: #003399;
+  }
+}
+
+@layer utilities {
+  .font-pixel {
+    font-family: var(--font-pixel), monospace;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono), monospace;
+  }
+
+  .font-os {
+    font-family: var(--font-os), system-ui, sans-serif;
+  }
+
+  /* Classic XP gray button */
+  .os-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 12px;
+    min-height: 23px;
+    background: linear-gradient(180deg, #fff 0%, #ece9d8 40%, #d4d0c8 100%);
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #404040;
+    border-bottom: 1px solid #404040;
+    box-shadow: 1px 1px 0 #000;
+    color: #000;
+    font-family: var(--font-os), sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .os-button:hover {
+    background: linear-gradient(180deg, #fff 0%, #f5f2e5 40%, #e8e4d4 100%);
+  }
+
+  .os-button:active {
+    border-top: 1px solid #404040;
+    border-left: 1px solid #404040;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    box-shadow: none;
+    padding: 4px 11px 2px 13px;
+  }
+
+  .os-button:disabled {
+    color: #808080;
+    cursor: default;
+  }
+
+  .xp-bevel-out {
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-right: 2px solid #404040;
+    border-bottom: 2px solid #404040;
+  }
+
+  .xp-bevel-in {
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+  }
+
+  .xp-input {
+    background: #fff;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    box-shadow: inset 1px 1px 0 #000;
+    color: #000;
+    font-family: var(--font-os), sans-serif;
+    font-size: 12px;
+    padding: 3px 6px;
+    outline: none;
+  }
+
+  .nokia-glow {
+    box-shadow:
+      0 0 8px var(--nokia-green),
+      inset 0 0 20px rgba(26, 46, 26, 0.5);
+  }
+}
+
+noscript {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  font-family: Tahoma, sans-serif;
+  color: #000;
+  background: #ece9d8;
+}
+
+@media print {
+  body {
+    background: white;
+    color: black;
+    overflow: visible;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes xp-title-shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
