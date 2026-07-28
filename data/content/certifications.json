@@ -1,0 +1,302 @@
+[
+  {
+    "name": "India AI Impact Buildathon",
+    "issuer": "HCL GUVI",
+    "date": "Feb 2026",
+    "description": "Participated in the premier national Buildathon focusing on building high-impact AI solutions for India.",
+    "url": "https://www.guvi.in/share-certificate/7Il72z602947x21wh1",
+    "image": "/images/certifications/cert_0.png",
+    "featured": true
+  },
+  {
+    "name": "Strategy Storm 2026",
+    "issuer": "IIT Guwahati",
+    "date": "Nov 2025",
+    "description": "Competed in the Strategy Storm case study competition organized by the prestigious Indian Institute of Technology, Guwahati.",
+    "url": "https://certificate.givemycertificate.com/c/d6a4b28a-63f3-49bc-b9a7-faa1b5811f25",
+    "image": "/images/certifications/cert_1.png",
+    "featured": true
+  },
+  {
+    "name": "Oracle Cloud Infrastructure 2025 AI Foundations Associate",
+    "issuer": "Oracle",
+    "date": "Nov 2025",
+    "description": "Earned official Oracle Cloud certification validating foundational knowledge of AI, ML, and generative AI concepts.",
+    "url": "https://catalog-education.oracle.com/pls/certview/sharebadge?id=947CE36702094C98AAECCD5F2137B6A72B560588C69A47F703778C5086164E5A",
+    "image": "/images/certifications/cert_2.png",
+    "featured": true
+  },
+  {
+    "name": "Cybersecurity Fundamentals",
+    "issuer": "IBM",
+    "date": "Oct 2025",
+    "description": "Demonstrated core understanding of cybersecurity principles, threat intelligence, and network defense strategies.",
+    "url": "https://www.credly.com/badges/5b01cac8-f2a1-4a46-8d7e-56a1ddd221a2/linked_in_profile",
+    "featured": true,
+    "image": "/images/certifications/cert_3.png"
+  },
+  {
+    "name": "Gen AI: Beyond the Chatbot",
+    "issuer": "Google",
+    "date": "May 2025",
+    "description": "Advanced training by Google covering the architecture and deployment of enterprise-grade Generative AI applications.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/15840795?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "featured": true,
+    "image": "/images/certifications/cert_4.png"
+  },
+  {
+    "name": "Gemini for Application Developers",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Mastered the integration of Google's Gemini models into production applications.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/12444348?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_5.png"
+  },
+  {
+    "name": "Machine Learning Operations (MLOps) for Generative AI",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Gained expertise in deploying, scaling, and managing large language models using modern MLOps pipelines.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/12379359?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_6.png"
+  },
+  {
+    "name": "Encoder-Decoder Architecture",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Deep dive into sequence-to-sequence models and image generation neural networks.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/12320831?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_7.png"
+  },
+  {
+    "name": "Neural Networks - Image Generation",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Mastered the diffusion network principles underlying modern image generation models.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/12320427?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_8.png"
+  },
+  {
+    "name": "Responsible AI with Google Cloud",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Explored the critical principles of responsible, unbiased AI deployment.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/12309014?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_9.png"
+  },
+  {
+    "name": "Prompt Design in Vertex AI",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Explored advanced prompt engineering patterns in the Vertex AI ecosystem.",
+    "url": "https://www.credly.com/badges/27d7b16b-c6e8-4351-84f8-1920d2f2c4fe/public_url",
+    "image": "/images/certifications/cert_10.png"
+  },
+  {
+    "name": "Introduction to Responsible AI",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Foundational overview of AI ethics and safe deployment standards.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/12032246?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_11.png"
+  },
+  {
+    "name": "Introduction to Large Language Models",
+    "issuer": "Google",
+    "date": "Oct 2024",
+    "description": "Studied the core architecture and Transformer principles under the hood of LLMs.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/12031984?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_12.png"
+  },
+  {
+    "name": "Introduction to Generative AI",
+    "issuer": "Google",
+    "date": "Jul 2024",
+    "description": "Mastered the foundations of AI and its application in generative solution delivery.",
+    "url": "https://www.cloudskillsboost.google/public_profiles/2cca2f03-7820-4935-800d-3489d3a8e16c/badges/10211667?utm_medium=social&utm_source=linkedin&utm_campaign=ql-social-share",
+    "image": "/images/certifications/cert_13.png"
+  },
+  {
+    "name": "Getting Started with Artificial Intelligence",
+    "issuer": "IBM",
+    "date": "Jul 2024",
+    "description": "Covered foundational machine learning paradigms and applications.",
+    "url": "https://www.credly.com/badges/55a7a03e-8ada-4cd5-a822-b65c716fc14b/public_url",
+    "image": "/images/certifications/cert_14.png"
+  },
+  {
+    "name": "Journey to Cloud",
+    "issuer": "IBM",
+    "date": "Jun 2024",
+    "description": "Comprehensive understanding of cloud computing paradigms and IBM Cloud infrastructure.",
+    "url": "https://www.credly.com/badges/d1ebf409-61d1-44ee-90d2-399c409d66c9/public_url",
+    "image": "/images/certifications/cert_15.png"
+  },
+  {
+    "name": "Enterprise-Grade AI",
+    "issuer": "IBM",
+    "date": "Jun 2024",
+    "description": "Deep dive into building secure and scalable enterprise artificial intelligence solutions.",
+    "url": "https://www.credly.com/badges/208d1b36-84b1-4fa5-8fbf-bdde5854449f/public_url",
+    "image": "/images/certifications/cert_16.png"
+  },
+  {
+    "name": "Python for Software Engineers",
+    "issuer": "Chegg Inc.",
+    "date": "Jul 2024",
+    "description": "Strengthened core Python foundations, data structures, and algorithmic principles.",
+    "url": "https://drive.google.com/file/d/1zEd6yvfUMfX5hLSR1gwpkkm06Qt-m296/view?usp=sharing",
+    "image": "/images/certifications/cert_17.png"
+  },
+  {
+    "name": "Introduction to Android Mobile App Development",
+    "issuer": "Meta",
+    "date": "Nov 2023",
+    "description": "Developed foundational skills in Android development, Kotlin, and modern UI architectures.",
+    "url": "https://www.coursera.org/account/accomplishments/records/S6MVVEGGVS9T",
+    "image": "/images/certifications/cert_18.png"
+  },
+  {
+    "name": "TCS iON Career Edge - Young Professional",
+    "issuer": "TCS iON",
+    "date": "Apr 2023",
+    "description": "Rigorous professional development program covering communication, IT foundations, and corporate etiquette.",
+    "url": "https://drive.google.com/file/d/1Q3tq3udioIdQPlAF-Ss0Y_EL8eMRIKGs/view?usp=drivesdk",
+    "image": "/images/certifications/cert_19.png"
+  },
+  {
+    "name": "The Evolving Universe",
+    "issuer": "Caltech",
+    "date": "Jan 2023",
+    "description": "Explored advanced astrophysics including Galactic Dynamics, Stellar Life Cycles, and Dark Matter through Caltech.",
+    "url": "https://coursera.org/verify/HOTH8TDI2XYN",
+    "image": "/images/certifications/cert_20.png"
+  },
+  {
+    "name": "Analyzing the Universe",
+    "issuer": "Rutgers University | Coursera",
+    "date": "Dec 2022",
+    "description": "Delved into advanced astrophysical data interpretation and celestial phenomenon observation techniques.",
+    "url": "https://coursera.org/verify/HJWTDP62K2GM",
+    "image": "/images/certifications/cert_21.png"
+  },
+  {
+    "name": "Astronomy: Exploring Time and Space",
+    "issuer": "University of Arizona",
+    "date": "Dec 2022",
+    "description": "Extensive exploration of the cosmos, merging the realms of astronomy with data analysis and IT.",
+    "url": "https://coursera.org/verify/IP32TL3HQXWL",
+    "image": "/images/certifications/cert_22.png"
+  },
+  {
+    "name": "AstroTech: Science & Technology Behind Astronomical Discovery",
+    "issuer": "The University of Edinburgh",
+    "date": "Dec 2022",
+    "description": "Studied the technical instrumentation, sensors, and technological innovations powering modern astronomical discoveries.",
+    "url": "https://coursera.org/verify/MMS2VS9U4N3T",
+    "image": "/images/certifications/cert_23.png"
+  },
+  {
+    "name": "From the Big Bang to Dark Energy",
+    "issuer": "The University of Tokyo",
+    "date": "Nov 2022",
+    "description": "Immersive journey into the origins of the universe and the mathematical/theoretical models behind cosmic evolution.",
+    "url": "https://coursera.org/verify/KXKW5LWGYML4",
+    "image": "/images/certifications/cert_24.png"
+  },
+  {
+    "name": "Stock Investing Made Easy",
+    "issuer": "Elearnmarkets",
+    "date": "Nov 2022",
+    "description": "Delved into technical and fundamental analysis, mastering the art of strategic investing.",
+    "url": "https://elearnmarkets.com/verify-certificate"
+  },
+  {
+    "name": "Doing more with Google Sheets",
+    "issuer": "Google Cloud Skills Boost",
+    "date": "Nov 2022",
+    "description": "Advanced skills in data analysis, automation, and collaborative spreadsheet strategies.",
+    "url": "https://coursera.org/verify/CF3KW4V3SLDE",
+    "image": "/images/certifications/cert_26.png"
+  },
+  {
+    "name": "Google Professional Workspace Administrator",
+    "issuer": "Google Cloud",
+    "date": "Oct 2022",
+    "description": "Mastery of enterprise cloud administration, secure deployments, and workflow optimization on Google Workspace.",
+    "url": "https://www.coursera.org/account/accomplishments/professional-cert/LUQ7FFP9FECJ",
+    "image": "/images/certifications/cert_27.png"
+  },
+  {
+    "name": "Google Sheets - Advance Topics",
+    "issuer": "Google Cloud Skills Boost",
+    "date": "Oct 2022",
+    "description": "Mastered advanced data analysis, automation, and collaborative spreadsheet strategies.",
+    "url": "https://coursera.org/verify/NLU2FFZ3X6XF",
+    "image": "/images/certifications/cert_28.png"
+  },
+  {
+    "name": "Getting started with Google Workspace",
+    "issuer": "Google Cloud Skills Boost",
+    "date": "Oct 2022",
+    "description": "Equipped with a robust skill set to navigate and optimize the full spectrum of Google Workspace tools.",
+    "url": "https://coursera.org/verify/specialization/5R7APPQB8WE9",
+    "image": "/images/certifications/cert_29.png"
+  },
+  {
+    "name": "Statistics with SAS",
+    "issuer": "SAS",
+    "date": "Oct 2022",
+    "description": "Acquired comprehensive understanding of statistical data modeling and descriptive analytics using SAS tools.",
+    "url": "https://www.coursera.org/account/accomplishments/records/4SDEZMJKA9V6",
+    "image": "/images/certifications/cert_30.png"
+  },
+  {
+    "name": "Cloud Computing basics (Cloud 101)",
+    "issuer": "LearnQuest",
+    "date": "Oct 2022",
+    "description": "Acquired fundamental knowledge of cloud architecture, deployment models, and service paradigms.",
+    "url": "https://coursera.org/verify/ZAJWKG73KSBY",
+    "image": "/images/certifications/cert_31.png"
+  },
+  {
+    "name": "Security and Privacy for Big Data",
+    "issuer": "EIT Digital",
+    "date": "Oct 2022",
+    "description": "Dedicated to enhancing data security practices and safeguarding complex big data landscapes.",
+    "url": "https://coursera.org/verify/L4LSDVV2Y2RG",
+    "image": "/images/certifications/cert_32.png"
+  },
+  {
+    "name": "Stock Market Made Easy",
+    "issuer": "Elearnmarkets",
+    "date": "Oct 2022",
+    "description": "Broadened understanding of stock market analysis and the cross-section between IT/automation and finance.",
+    "url": "https://www.elearnmarkets.com/verify-certificate",
+    "image": "/images/certifications/cert_33.png"
+  },
+  {
+    "name": "A2Z of Stock Market for Beginners",
+    "issuer": "Elearnmarkets",
+    "date": "Aug 2022",
+    "description": "A deep dive into the fundamentals of equities and automated data analytics in stock market dynamics.",
+    "url": "https://www.elearnmarkets.com/verify-certificate",
+    "image": "/images/certifications/cert_34.png"
+  },
+  {
+    "name": "Advance Spreadsheet Program",
+    "issuer": "Keerti computer Institute",
+    "date": "Apr 2022",
+    "description": "Acquired in-depth knowledge of data analysis, complex formulations, and business automation.",
+    "url": "https://drive.google.com/file/d/1JzRw8LsIgdKoOig3QP3GwxvvffoSkBHa/view?usp=drivesdk",
+    "image": "/images/certifications/cert_35.png"
+  },
+  {
+    "name": "Maharashtra State Certificate in Information Technology",
+    "issuer": "Keerti computer Institute",
+    "date": "Nov 2021",
+    "description": "Solidified foundational core competencies in Information Technology systems and software architecture.",
+    "url": "https://drive.google.com/file/d/1JtdqgueAe96YYPTRnOj2fu_Zh8eZjFP_/view?usp=drivesdk",
+    "image": "/images/certifications/cert_36.png"
+  }
+]

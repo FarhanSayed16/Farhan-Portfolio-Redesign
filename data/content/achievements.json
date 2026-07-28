@@ -1,0 +1,118 @@
+[
+  {
+    "title": "Smart India Hackathon 2025",
+    "description": "Architected a scalable Disaster Preparedness & Management System for K-12 education, winning the national championship out of thousands of teams.",
+    "level": "National",
+    "year": "2025",
+    "place": "1st Place",
+    "link": null,
+    "images": [
+      "/achievements/SIH 2025 winning/1.jpg",
+      "/achievements/SIH 2025 winning/2.jpg",
+      "/achievements/SIH 2025 winning/3.JPG",
+      "/achievements/SIH 2025 winning/4.JPG",
+      "/achievements/SIH 2025 winning/5.JPG",
+      "/achievements/SIH 2025 winning/6.jpg",
+      "/achievements/SIH 2025 winning/7.jpg"
+    ],
+    "gridSize": "large"
+  },
+  {
+    "title": "The Open Group INITIATE EA",
+    "description": "Designed GovBuy, an enterprise-grade government procurement platform, competing at a global scale.",
+    "level": "International",
+    "year": "2025",
+    "place": "Finalist",
+    "link": null,
+    "images": [
+      "/achievements/the open group/1.jpg",
+      "/achievements/the open group/2.jpg",
+      "/achievements/the open group/3.jpg"
+    ],
+    "gridSize": "large"
+  },
+  {
+    "title": "MechNova Robo-Making",
+    "description": "Engineered a Universal Terrain Cleaning Robot to tackle complex environmental obstacles.",
+    "level": "National",
+    "year": "2025",
+    "place": "1st Place",
+    "link": null,
+    "images": [
+      "/achievements/mechnova/1.jpg",
+      "/achievements/mechnova/2.jpg",
+      "/achievements/mechnova/3.jpg",
+      "/achievements/mechnova/4.jpg",
+      "/achievements/mechnova/5.jpeg",
+      "/achievements/mechnova/6.jpg",
+      "/achievements/mechnova/7.jpg"
+    ],
+    "gridSize": "square",
+    "fit": "cover"
+  },
+  {
+    "title": "Internal SIH-2025",
+    "description": "Built a civic issue crowdsourcing platform for the Government of Jharkhand, securing the top spot.",
+    "level": "College",
+    "year": "2025",
+    "place": "1st Place",
+    "link": null,
+    "images": [
+      "/achievements/Internal Sih 2025/1.jpg",
+      "/achievements/Internal Sih 2025/2.jpg",
+      "/achievements/Internal Sih 2025/3.jpg",
+      "/achievements/Internal Sih 2025/4.jpg",
+      "/achievements/Internal Sih 2025/5.jpg",
+      "/achievements/Internal Sih 2025/6.jpg",
+      "/achievements/Internal Sih 2025/7.jpg"
+    ],
+    "gridSize": "wide"
+  },
+  {
+    "title": "Smart India Hackathon 2024",
+    "description": "Developed an AYUSH Startup Registration Portal for the Ministry of Ayush, reaching the grand finale at IIT Tirupati.",
+    "level": "National",
+    "year": "2024",
+    "place": "Finalist",
+    "link": null,
+    "images": [
+      "/achievements/sih 24 runnerups/1.jpeg",
+      "/achievements/sih 24 runnerups/2.jpg",
+      "/achievements/sih 24 runnerups/3.jpg",
+      "/achievements/sih 24 runnerups/4.jpg",
+      "/achievements/sih 24 runnerups/5.jpg"
+    ],
+    "gridSize": "large"
+  },
+  {
+    "title": "National-Level CSI Ideathon",
+    "description": "Created MediScan, an AI-based healthcare diagnostic tool, securing a podium finish.",
+    "level": "National",
+    "year": "2024",
+    "place": "3rd Place",
+    "link": null,
+    "images": [
+      "/achievements/CSI Ideathon/1.jpg",
+      "/achievements/CSI Ideathon/2.jpg",
+      "/achievements/CSI Ideathon/3.jpg",
+      "/achievements/CSI Ideathon/4.jpg",
+      "/achievements/CSI Ideathon/5.jpg"
+    ],
+    "gridSize": "square"
+  },
+  {
+    "title": "Internal Smart India Hackathon 2024",
+    "description": "Developed the Innovation Excellence Portal for AYUSH, dominating the internal college qualifier.",
+    "level": "College",
+    "year": "2024",
+    "place": "1st Place",
+    "link": null,
+    "images": [
+      "/achievements/internal sih 2024/1.JPG",
+      "/achievements/internal sih 2024/2.jpeg",
+      "/achievements/internal sih 2024/3.JPG",
+      "/achievements/internal sih 2024/4.jpg"
+    ],
+    "gridSize": "wide"
+  }
+]

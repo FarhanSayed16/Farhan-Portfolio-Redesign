@@ -1,0 +1,32 @@
+[
+  {
+    "company": "Ridlan AI Foundation (Piramal Finance)",
+    "role": "Full Stack Developer Intern",
+    "duration": "2026 - Present",
+    "description": "Scaling frontend and backend systems, building robust web applications and AI-driven solutions."
+  },
+  {
+    "company": "Imarticus Learning",
+    "role": "Data Science & Analytics Intern",
+    "duration": "2025",
+    "description": "Analyzing complex datasets, building predictive models, and learning advanced data science tools and methodologies."
+  },
+  {
+    "company": "Cyber Secured India",
+    "role": "Cyber Security & Digital Forensics Intern",
+    "duration": "2024 - 2025",
+    "description": "Explored network security protocols, vulnerability assessments, and digital forensics principles."
+  },
+  {
+    "company": "META Craftlab",
+    "role": "Full Stack Developer Intern",
+    "duration": "2024",
+    "description": "Designed and deployed dynamic web applications using React and Next.js, integrating backend services and optimizing performance."
+  },
+  {
+    "company": "IBM SkillsBuild",
+    "role": "Front-End, AI & Cloud Intern",
+    "duration": "2024",
+    "description": "Completed multiple tracks focusing on modern frontend architecture, cloud deployment, and fundamentals of AI/ML integration."
+  }
+]

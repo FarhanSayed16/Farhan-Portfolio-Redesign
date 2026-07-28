@@ -1,0 +1,30 @@
+{
+  "bio": "I am Farhan Sayed, an AI & Full-Stack Engineer dedicated to building the future. I specialize in architecting high-impact government platforms, leading national award-winning startup ventures, and deploying enterprise-grade AI systems. Driven by relentless ambition, my mission is to transform complex problems into elegant, highly scalable solutions that bridge the gap between cutting-edge technology and real-world impact.",
+  "timeline": [
+    { 
+      "title": "B.Sc IT Graduate & MCA Candidate", 
+      "year": "2023 - Present", 
+      "description": "Graduated with a B.Sc. in Information Technology in 2026 from VSIT Mumbai and currently pursuing MCA. Actively engaged in developing government-backed projects and scalable startup ideas while leading 120+ members as President of the CSI student branch." 
+    },
+    { 
+      "title": "Internships & AI/Cloud Focus", 
+      "year": "2024", 
+      "description": "Completed IBM SkillsBuild internships in Front-End, AI, and Cloud dev. Worked as a Full Stack Developer Intern at META Craftlab and an AI Intern at Evoastra Ventures." 
+    },
+    { 
+      "title": "Hackathon Successes", 
+      "year": "2024", 
+      "description": "Finalist at Smart India Hackathon for the AYUSH Startup Portal. Secured 3rd place at the National-Level CSI Ideathon with 'MediScan'." 
+    },
+    { 
+      "title": "Cybersecurity & Data", 
+      "year": "2024-25", 
+      "description": "Interned in Cyber Security & Digital Forensics at Cyber Secured India, and set to intern in Data Science/Analytics at Imarticus Learning." 
+    },
+    { 
+      "title": "Innovation & AI Hustle", 
+      "year": "2025-2026", 
+      "description": "Won Smart India Hackathon 2025 with a Disaster Education System. Finalist in The Open Group INITIATE EA Competition with 'GovBuy'. Currently working as a Full Stack Developer Intern at Ridlan AI Foundation (Piramal Finance), scaling frontend and backend systems." 
+    }
+  ]
+}
