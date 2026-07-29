@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { SFXSynth } from '@/lib/SFXSynth';
+import { getGameBGM } from '@/lib/GameBGM';
 import { portfolioData } from '@/lib/portfolioData';
 import { gameBridge } from '@/lib/GameBridge';
 
@@ -16,12 +17,12 @@ export default class BaseLevel extends Phaser.Scene {
   protected coins = 0;
   protected lives = 3;
   protected timeLeft = 400;
-  protected levelComplete = false;
-  protected deathHandled = false;
-  protected worldLabel = '1-1';
   /** Cleared in init — scene.restart() reuses the instance, so Sets must not survive a death. */
-  protected hitTiles = new Set<string>();
+  hitTiles = new Set<string>();
+  levelComplete = false;
+  deathHandled = false;
 
+  protected worldLabel = '1-1';
   private scoreText!: Phaser.GameObjects.Text;
   private coinsText!: Phaser.GameObjects.Text;
   private worldText!: Phaser.GameObjects.Text;
@@ -30,7 +31,7 @@ export default class BaseLevel extends Phaser.Scene {
   private hireMeEggTriggered = false;
   private resumeHandler: ((data?: unknown) => void) | null = null;
   protected timeEvent!: Phaser.Time.TimerEvent;
-  protected sfx: SFXSynth;
+  sfx: SFXSynth;
 
   constructor(key: string) {
     super({ key });
@@ -69,19 +70,27 @@ export default class BaseLevel extends Phaser.Scene {
   /** Place hills / bushes / clouds for that SMB overworld feel. */
   protected addScenery(mapWidth: number) {
     const groundY = this.cameras.main.height - 64;
-    for (let x = 40; x < mapWidth; x += 280) {
-      this.add.image(x, groundY - 20, 'hill').setOrigin(0.5, 1).setDepth(0).setScrollFactor(0.4);
+    for (let x = 20; x < mapWidth; x += 220) {
+      this.add.image(x, groundY - 16, 'hill').setOrigin(0.5, 1).setDepth(0).setScrollFactor(0.35);
     }
-    for (let x = 120; x < mapWidth; x += 200) {
-      this.add.image(x, groundY - 2, 'bush').setOrigin(0.5, 1).setDepth(1).setScrollFactor(0.85);
+    for (let x = 90; x < mapWidth; x += 160) {
+      this.add.image(x, groundY - 2, 'bush').setOrigin(0.5, 1).setDepth(1).setScrollFactor(0.8);
     }
-    for (let x = 80; x < mapWidth; x += 260) {
+    for (let x = 40; x < mapWidth; x += 180) {
       this.add
-        .image(x, 70 + ((x / 60) % 3) * 20, 'cloud')
+        .image(x, 55 + ((x / 60) % 3) * 18, 'cloud')
         .setDepth(0)
-        .setScrollFactor(0.25)
-        .setAlpha(0.95);
+        .setScrollFactor(0.2)
+        .setAlpha(0.98);
     }
+  }
+
+  protected startBgm(mood: 'overworld' | 'castle' = 'overworld') {
+    getGameBGM()?.start(mood);
+  }
+
+  protected stopBgm() {
+    getGameBGM()?.stop();
   }
 
   createHUD() {
@@ -158,6 +167,7 @@ export default class BaseLevel extends Phaser.Scene {
       this.resumeHandler = null;
     }
     this.timeEvent?.remove(false);
+    this.stopBgm();
   };
 
   addScore(pts: number) {
@@ -187,7 +197,7 @@ export default class BaseLevel extends Phaser.Scene {
       this.coins = 0;
       this.lives++;
       this.livesText.setText(String(this.lives));
-      this.sfx.playPowerup();
+      this.sfx.playOneup();
     }
 
     this.coinsText.setText(`×${this.coins.toString().padStart(2, '0')}`);
@@ -205,6 +215,7 @@ export default class BaseLevel extends Phaser.Scene {
     if (this.levelComplete) return;
     this.levelComplete = true;
     this.timeEvent?.remove(false);
+    this.stopBgm();
     this.sfx.playFlagpole();
     this.physics.pause();
     this.time.delayedCall(400, () => {
@@ -218,6 +229,7 @@ export default class BaseLevel extends Phaser.Scene {
 
   die() {
     this.timeEvent?.remove(false);
+    this.stopBgm();
     gameBridge.emit('hide-overlay');
     this.lives--;
     this.sfx.playDie();

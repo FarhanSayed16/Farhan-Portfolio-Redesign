@@ -29,7 +29,7 @@ function drawGrid(g: Phaser.GameObjects.Graphics, grid: string[], scale: number,
 }
 
 function gTex(scene: Phaser.Scene, key: string, w: number, h: number, paint: (g: Phaser.GameObjects.Graphics) => void) {
-  if (scene.textures.exists(key)) scene.textures.remove(key);
+  if (scene.textures.exists(key)) return; // keep sheet PNGs
   const g = scene.make.graphics({ x: 0, y: 0 });
   paint(g);
   g.generateTexture(key, w, h);
@@ -358,14 +358,9 @@ export function generateGameTextures(scene: Phaser.Scene) {
   gTex(scene, 'mario_small_walk2', 32, 32, (g) => drawGrid(g, SPRITES.small_mario_walk2, 2));
   gTex(scene, 'mario_small_jump', 32, 32, (g) => drawGrid(g, SPRITES.small_mario_jump, 2));
   gTex(scene, 'mario_s_die', 32, 32, (g) => drawGrid(g, SPRITES.small_mario_die, 2));
-  
-  // Using small mario logic for big mario since we only built small grids for time
-  gTex(scene, 'mario_b_idle', 32, 48, (g) => drawGrid(g, SPRITES.small_mario_idle, 3));
-  gTex(scene, 'mario_big_walk1', 32, 48, (g) => drawGrid(g, SPRITES.small_mario_idle, 3));
-  gTex(scene, 'mario_big_walk2', 32, 48, (g) => drawGrid(g, SPRITES.small_mario_idle, 3));
-  gTex(scene, 'mario_big_walk3', 32, 48, (g) => drawGrid(g, SPRITES.small_mario_idle, 3));
-  gTex(scene, 'mario_big_jump', 32, 48, (g) => drawGrid(g, SPRITES.small_mario_idle, 3));
-  gTex(scene, 'mario_b_duck', 32, 32, (g) => drawGrid(g, SPRITES.small_mario_idle, 2));
+
+  // Super / fire / items / boss / koopa — ExtraTextures (inspired originals)
+  // (intentionally not generating scaled small-mario stubs here)
 
   gTex(scene, 'block_brick', 32, 32, (g) => drawGrid(g, SPRITES.brick, 2));
   gTex(scene, 'block_ground', 32, 32, (g) => drawGrid(g, SPRITES.ground, 2));
@@ -385,8 +380,6 @@ export function generateGameTextures(scene: Phaser.Scene) {
   gTex(scene, 'goomba_walk2', 32, 32, (g) => drawGrid(g, SPRITES.goomba_idle, 2, 0, 0, true));
   gTex(scene, 'goomba_flat', 32, 32, (g) => drawGrid(g, SPRITES.goomba_die, 2));
 
-  gTex(scene, 'mushroom', 32, 32, (g) => drawGrid(g, SPRITES.small_mario_idle, 2)); 
-  
   gTex(scene, 'pipe_top', 64, 32, (g) => {
     drawGrid(g, SPRITES.pipe_top, 2);
     drawGrid(g, SPRITES.pipe_top, 2, 32, 0, true);
@@ -422,77 +415,48 @@ export function generateGameTextures(scene: Phaser.Scene) {
 }
 
 export function registerGameAnims(scene: Phaser.Scene) {
-  scene.anims.create({
-    key: 'mario-small-idle',
-    frames: [{ key: 'mario_s_idle' }]
-  });
-  scene.anims.create({
-    key: 'mario-small-walk',
-    frames: [
-      { key: 'mario_small_walk1' },
-      { key: 'mario_small_walk2' }
-    ],
-    frameRate: 10,
-    repeat: -1
-  });
-  scene.anims.create({
-    key: 'mario-small-jump',
-    frames: [{ key: 'mario_small_jump' }]
-  });
-  scene.anims.create({
-    key: 'mario-small-die',
-    frames: [{ key: 'mario_s_die' }]
-  });
-  scene.anims.create({
-    key: 'mario-big-idle',
-    frames: [{ key: 'mario_b_idle' }]
-  });
-  scene.anims.create({
-    key: 'mario-big-walk',
-    frames: [
+  const once = (
+    key: string,
+    frames: Phaser.Types.Animations.AnimationFrame[],
+    frameRate?: number,
+    repeat?: number
+  ) => {
+    if (scene.anims.exists(key)) return;
+    scene.anims.create({ key, frames, frameRate, repeat });
+  };
+  once('mario-small-idle', [{ key: 'mario_s_idle' }]);
+  once(
+    'mario-small-walk',
+    [{ key: 'mario_small_walk1' }, { key: 'mario_small_walk2' }],
+    10,
+    -1
+  );
+  once('mario-small-jump', [{ key: 'mario_small_jump' }]);
+  once('mario-small-die', [{ key: 'mario_s_die' }]);
+  once('mario-big-idle', [{ key: 'mario_b_idle' }]);
+  once(
+    'mario-big-walk',
+    [
       { key: 'mario_big_walk1' },
       { key: 'mario_big_walk2' },
-      { key: 'mario_big_walk3' }
+      { key: 'mario_big_walk3' },
     ],
-    frameRate: 10,
-    repeat: -1
-  });
-  scene.anims.create({
-    key: 'mario-big-jump',
-    frames: [{ key: 'mario_big_jump' }]
-  });
-  scene.anims.create({
-    key: 'goomba-walk',
-    frames: [
-      { key: 'goomba_0' },
-      { key: 'goomba_walk2' }
-    ],
-    frameRate: 6,
-    repeat: -1
-  });
-  scene.anims.create({
-    key: 'goomba-flat',
-    frames: [{ key: 'goomba_flat' }]
-  });
-  scene.anims.create({
-    key: 'coin-spin',
-    frames: [
+    10,
+    -1
+  );
+  once('mario-big-jump', [{ key: 'mario_big_jump' }]);
+  once('goomba-walk', [{ key: 'goomba_0' }, { key: 'goomba_walk2' }], 6, -1);
+  once('goomba-flat', [{ key: 'goomba_flat' }]);
+  once(
+    'coin-spin',
+    [
       { key: 'coin_spin1' },
       { key: 'coin_spin2' },
       { key: 'coin_spin3' },
-      { key: 'coin_spin4' }
+      { key: 'coin_spin4' },
     ],
-    frameRate: 8,
-    repeat: -1
-  });
-  scene.anims.create({
-    key: 'qblock-idle',
-    frames: [
-      { key: 'qblock_1' },
-      { key: 'qblock_2' },
-      { key: 'qblock_3' }
-    ],
-    frameRate: 6,
-    repeat: -1
-  });
+    8,
+    -1
+  );
+  once('qblock-idle', [{ key: 'qblock_1' }, { key: 'qblock_2' }, { key: 'qblock_3' }], 6, -1);
 }

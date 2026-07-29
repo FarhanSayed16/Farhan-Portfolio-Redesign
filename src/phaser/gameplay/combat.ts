@@ -1,11 +1,13 @@
-import type { Player } from '../sprites/Player';
-import type { Goomba } from '../sprites/Enemy';
+import type Phaser from 'phaser';
 
 /**
- * True when Mario is landing on top of the enemy (not a side bump).
- * Uses position, not post-resolve velocity — Arcade often zeroes velocity.y before the callback.
+ * True when the player is landing on top of the enemy (not a side bump).
+ * Uses position + deltaY — Arcade often zeroes velocity.y before the callback.
  */
-export function isStomp(player: Player, enemy: Goomba): boolean {
+export function isStomp(
+  player: Phaser.Physics.Arcade.Sprite,
+  enemy: Phaser.Physics.Arcade.Sprite
+): boolean {
   const pb = player.body as Phaser.Physics.Arcade.Body | undefined;
   const eb = enemy.body as Phaser.Physics.Arcade.Body | undefined;
   if (!pb || !eb) return false;

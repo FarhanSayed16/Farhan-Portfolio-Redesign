@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { generateGameTextures, registerGameAnims } from '../assets/SmTextureFactory';
 
 export default class BootScene extends Phaser.Scene {
   constructor() {
@@ -7,8 +6,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   create() {
-    generateGameTextures(this);
-    registerGameAnims(this);
+    // Sheets load in PreloadScene; procedural factory is fallback only.
     this.scene.start('PreloadScene');
   }
 }
