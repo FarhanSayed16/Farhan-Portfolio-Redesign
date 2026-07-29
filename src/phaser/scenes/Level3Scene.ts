@@ -1,21 +1,21 @@
 import Phaser from 'phaser';
 import BaseLevel from './BaseLevel';
 import { Player } from '../sprites/Player';
-import { Goomba } from '../sprites/Enemy';
-import { Mushroom } from '../sprites/Item';
-import { Coin, spawnBlockCoin, spawnScorePopup } from '../sprites/Coin';
+import { Goomba, Koopa } from '../sprites/Enemy';
+import { Mushroom, FireFlower } from '../sprites/Item';
+import { Fireball } from '../sprites/Fireball';
+import { Coin } from '../sprites/Coin';
 import { Bowser } from '../sprites/Bowser';
 import { Axe } from '../sprites/Axe';
-import { isStomp } from '../gameplay/combat';
-import { gameBridge } from '@/lib/GameBridge';
-import { portfolioData } from '@/lib/portfolioData';
+import { spawnEnemyFromObject, wireCombat, handleQBlockHit } from '../gameplay/levelCombat';
 
 export default class Level3Scene extends BaseLevel {
-  private player!: Player;
-  private goombas!: Phaser.Physics.Arcade.Group;
-  private items!: Phaser.Physics.Arcade.Group;
+  player!: Player;
+  enemies!: Phaser.Physics.Arcade.Group;
+  items!: Phaser.Physics.Arcade.Group;
+  fireballs!: Phaser.Physics.Arcade.Group;
   private coinsGroup!: Phaser.Physics.Arcade.Group;
-  private groundLayer!: Phaser.Tilemaps.TilemapLayer;
+  groundLayer!: Phaser.Tilemaps.TilemapLayer;
   private bowser!: Bowser;
   private axe!: Axe;
   private winStarted = false;
@@ -30,7 +30,7 @@ export default class Level3Scene extends BaseLevel {
     if (this.physics.world.isPaused) this.physics.world.resume();
     this.winStarted = false;
 
-    this.cameras.main.setBackgroundColor('#5c94fc');
+    this.cameras.main.setBackgroundColor('#000000');
 
     const map = this.make.tilemap({ key: 'level3' });
     const tileset = map.addTilesetImage('tiles', 'tiles');
@@ -41,10 +41,9 @@ export default class Level3Scene extends BaseLevel {
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.addScenery(map.widthInPixels);
-
-    this.goombas = this.physics.add.group();
+    this.enemies = this.physics.add.group();
     this.items = this.physics.add.group();
+    this.fireballs = this.physics.add.group();
     this.coinsGroup = this.physics.add.group({ allowGravity: false, immovable: true });
 
     const objects = map.getObjectLayer('Objects')?.objects || [];
@@ -64,8 +63,8 @@ export default class Level3Scene extends BaseLevel {
       const x = obj.x || 0;
       const y = obj.y || 0;
 
-      if (obj.type === 'Enemy') {
-        this.goombas.add(new Goomba(this, x, y - 8));
+      if (obj.type === 'Enemy' || obj.type === 'Koopa') {
+        spawnEnemyFromObject(this, this.enemies, obj);
       } else if (obj.type === 'BowserSpawn') {
         this.bowser = new Bowser(this, x, y);
       } else if (obj.type === 'Axe') {
@@ -76,31 +75,38 @@ export default class Level3Scene extends BaseLevel {
       }
     });
 
+    this.enemies.add(new Koopa(this, 280, 360));
     this.registry.set('bridgeObj', bridgeObj);
     [180, 320].forEach((cx) => this.coinsGroup.add(new Coin(this, cx, 260)));
 
     this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
     this.physics.add.collider(this.player, this.groundLayer, this.handlePlayerGroundCollision, undefined, this);
-    this.physics.add.collider(this.goombas, this.groundLayer);
+    this.physics.add.collider(this.enemies, this.groundLayer);
     this.physics.add.collider(this.items, this.groundLayer);
     if (this.bowser) {
       this.physics.add.collider(this.bowser, this.groundLayer);
       this.physics.add.collider(this.player, this.bowser, this.handlePlayerBowserCollision, undefined, this);
+      this.physics.add.overlap(this.fireballs, this.bowser, (b) => {
+        (b as Fireball).destroy();
+        this.addScore(200);
+        this.sfx.playBoss();
+      });
     }
-    this.physics.add.overlap(this.player, this.goombas, this.handlePlayerEnemyCollision, undefined, this);
-    this.physics.add.overlap(this.player, this.items, this.handlePlayerItemOverlap, undefined, this);
     this.physics.add.overlap(this.player, this.coinsGroup, this.handleCoinOverlap, undefined, this);
 
+    wireCombat(this);
     this.bindLevelEvents(() => this.player?.die());
     this.createHUD();
+    this.startBgm('castle');
   }
 
   update() {
     if (!this.player || this.levelComplete || this.winStarted) return;
     this.player.update();
-    this.goombas.getChildren().forEach((g) => (g as Goomba).update?.());
-    this.items.getChildren().forEach((i) => (i as Mushroom).update?.());
+    this.enemies.getChildren().forEach((g) => (g as Goomba | Koopa).update?.());
+    this.items.getChildren().forEach((i) => (i as Mushroom | FireFlower).update?.());
+    this.fireballs.getChildren().forEach((f) => (f as Fireball).update?.());
     if (this.bowser) this.bowser.update();
   }
 
@@ -109,6 +115,7 @@ export default class Level3Scene extends BaseLevel {
     this.winStarted = true;
     this.levelComplete = true;
     this.timeEvent?.remove(false);
+    this.stopBgm();
     this.sfx.playBoss();
 
     this.axe?.destroy();
@@ -137,7 +144,7 @@ export default class Level3Scene extends BaseLevel {
   private handlePlayerBowserCollision: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (p) => {
     const player = p as Player;
     if (!player.body || player.isInvincible()) return;
-    if (player.isSuper) player.shrink();
+    if (player.isSuper || player.isFire) player.shrink();
     else player.die();
   };
 
@@ -145,70 +152,11 @@ export default class Level3Scene extends BaseLevel {
     const player = p as Player;
     const tile = t as Phaser.Tilemaps.Tile;
     if (!tile || !player.body) return;
-
-    if (tile.index === 3 && player.body.blocked.up) {
-      const key = `${tile.x},${tile.y}`;
-      if (this.hitTiles.has(key)) return;
-      this.hitTiles.add(key);
-      this.groundLayer.putTileAt(4, tile.x, tile.y);
-      this.addScore(50);
-      this.sfx.playBlock();
-      const worldX = tile.pixelX + 16;
-      if (this.hitTiles.size % 2 === 1) {
-        this.items.add(new Mushroom(this, worldX, tile.pixelY));
-        this.sfx.playPowerup();
-      } else {
-        spawnBlockCoin(this, worldX, tile.pixelY, () => this.addCoin());
-      }
-      this.events.emit('post-overlay-resume');
-      this.scene.pause();
-      gameBridge.emit('show-overlay', {
-        type: 'skill',
-        text: portfolioData.skills[Math.floor(Math.random() * portfolioData.skills.length)],
-      });
-    }
-
+    if (handleQBlockHit(this, player, tile)) return;
     if (tile.index === 2 && player.body.blocked.up && this.player.isSuper) {
       this.groundLayer.removeTileAt(tile.x, tile.y);
       this.addScore(50);
       this.sfx.playStomp();
     }
-  };
-
-  private handlePlayerEnemyCollision: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (p, e) => {
-    const player = p as Player;
-    const enemy = e as Goomba;
-    if (!player.body || !enemy.body || enemy.dead || player.isInvincible()) return;
-
-    if (isStomp(player, enemy)) {
-      enemy.stomp();
-      player.setVelocityY(-320);
-      this.addScore(100);
-      spawnScorePopup(this, enemy.x, enemy.y - 10, 100);
-      this.sfx.playStomp();
-    } else if (player.isSuper) {
-      player.shrink();
-    } else {
-      player.die();
-    }
-  };
-
-  private handlePlayerItemOverlap: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (_p, i) => {
-    const item = i as Mushroom;
-    if (item.isEmerging) return;
-    this.player.grow();
-    this.addScore(1000);
-    spawnScorePopup(this, item.x, item.y - 10, 1000);
-    item.destroy();
-    this.sfx.playPowerup();
-    this.time.delayedCall(80, () => {
-      if (this.levelComplete || this.deathHandled) return;
-      this.events.emit('post-overlay-resume');
-      this.scene.pause();
-      gameBridge.emit('show-overlay', {
-        type: 'project',
-        text: portfolioData.projects[Math.floor(Math.random() * portfolioData.projects.length)],
-      });
-    });
   };
 }
