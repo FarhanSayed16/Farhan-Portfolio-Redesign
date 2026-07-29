@@ -47,8 +47,7 @@
       "/achievements/mechnova/6.jpg",
       "/achievements/mechnova/7.jpg"
     ],
-    "gridSize": "square",
-    "fit": "cover"
+    "gridSize": "square"
   },
   {
     "title": "Internal SIH-2025",

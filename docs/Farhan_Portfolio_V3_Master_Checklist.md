@@ -73,7 +73,7 @@
 - [x] `public/icons` created
 - [x] `src/app` with `layout.tsx`, `page.tsx`, `globals.css`
 - [x] `src/components/desktop` (+ `windows/`)
-- [x] `src/components/mobile` (+ `screens/`)
+- [x] `src/components/mobile` (`PhoneShell`, `PhoneFrame`, `PhoneScreen`, `PhoneGame`, `OsLiteShell`, `phoneFrame.css` — keypad lives in `PhoneFrame`, no `screens/` split)
 - [x] `src/components/game` (+ `phaser/` stubs)
 - [x] `src/components/shared`
 - [x] `src/context`, `src/hooks`, `src/lib` created
@@ -473,13 +473,15 @@
 - [x] currentScreen + history + selectedIndex
 - [x] navigate / back / move / select actions
 
-### 13.4 — `PhoneKeypad` mapping
+### 13.4 — Keypad mapping (in `PhoneFrame`, not a separate `PhoneKeypad.tsx`)
 - [x] D-pad navigation
 - [x] SELECT confirms
 - [x] Soft key Back
 - [x] Number jump-to-item
 - [x] `*` mute toggle hook
 - [x] `#` show-all hook where used
+- [x] Industrial CSS frame + scanlines (`phoneFrame.css`) — Mobile Enhancement M1
+- [x] Game launcher + native pads; OsLite portrait escape (M3–M4)
 
 ### 13.5 — Phone boot
 - [x] Boot screen → Main Menu
@@ -494,9 +496,10 @@
 # PHASE 14 — Nokia Portfolio Screens
 
 ### 14.1 — Main Menu
-- [x] Profile / Projects / Skills / Achievements / Contact / Play Game
+- [x] Profile / Achievements / Projects / Skills / Experience / Contact / Play Game / Farhan OS / Reset
 - [x] Cursor highlight
 - [x] Number shortcuts
+- [x] Hire-first order (Mobile Enhancement M2)
 
 ### 14.2 — Profile
 - [x] Identity snapshot
@@ -917,15 +920,17 @@
 
 ## Global non-negotiables (tick at end of project)
 
-- [ ] Desktop users get Farhan OS (not a conventional scroll site as primary)
-- [ ] Mobile users get Nokia phone primary experience
-- [ ] Tablet users get choice + memory
-- [ ] Game is playable (World 1, 3 levels) with portfolio overlays
-- [ ] Hire / Contact path exists from OS, phone, and game win
-- [ ] Audio strategy copyright-safe (synthesized SFX + CC0 BGM)
-- [ ] Content JSON remains source of truth
-- [ ] Placeholders never crash production UI
+- [x] Desktop users get Farhan OS (not a conventional scroll site as primary)
+- [x] Mobile users get modern portfolio primary experience (`width < 768` → `ModernPortfolioShell`; Nokia via `/?view=nokia` easter egg; Time Machine eras desktop-only)
+- [x] Tablet users get choice + memory
+- [x] Game is playable (World 1, 3 levels) with portfolio overlays
+- [x] Hire / Contact path exists from OS, phone, and game win
+- [x] Audio strategy copyright-safe (synthesized SFX + CC0 BGM)
+- [x] Content JSON remains source of truth
+- [x] Placeholders never crash production UI
 - [ ] Master Plan Phase Exit Criteria all satisfied
+
+<!-- Production / browser sign-off remains in Phase 24 (deploy-time). -->
 
 ---
 
@@ -938,7 +943,7 @@
 | OS state | `src/context/WindowContext.tsx` |
 | OS UI | `Desktop.tsx`, `Taskbar.tsx`, `StartMenu.tsx`, `Window.tsx`, `BootScreen.tsx` |
 | OS apps | `src/components/desktop/windows/*` |
-| Phone | `PhoneFrame.tsx`, `PhoneScreen.tsx`, `PhoneKeypad.tsx`, `PhoneContext.tsx`, `screens/*` |
+| Phone | `PhoneShell.tsx`, `PhoneFrame.tsx`, `PhoneScreen.tsx`, `PhoneGame.tsx`, `MobileControls.tsx`, `OsLiteShell.tsx`, `phoneFrame.css`, `osLite.css`, `PhoneContext.tsx` |
 | Game React | `GameWrapper.tsx`, `GameOverlay.tsx` |
 | Game Phaser | `phaser/main.ts`, `bridge/GameBridge.ts`, `scenes/*`, `audio/SFXSynth.ts`, `data/portfolioData.ts` |
 | Assets | `public/icons/*`, `public/game/**`, `public/images/**`, `public/resume.pdf` |

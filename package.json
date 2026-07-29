@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:mobile": "node scripts/check-mobile-plan.mjs",
+    "check:mobile-modern": "node scripts/check-mobile-modern.mjs",
+    "gen:game-assets": "node scripts/gen-smb-assets.mjs && node scripts/gen-smb-bgm.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
