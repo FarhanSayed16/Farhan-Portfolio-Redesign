@@ -1,19 +1,91 @@
 'use client';
 
 import { usePhone, type PhoneScreen } from '@/context/PhoneContext';
-import { projectsData, getMailtoHref } from '@/lib/content';
+import { projectsData } from '@/lib/content';
 import { notifyMuteChanged } from '@/lib/SFXSynth';
-import PhoneScreenComponent from './PhoneScreen';
+import type { PointerEvent as ReactPointerEvent } from 'react';
+import { emitGamePad } from './MobileControls';
+import PhoneScreenComponent, {
+  MENU_ITEMS,
+  getSoftKeyLabels,
+  openContactSelection,
+} from './PhoneScreen';
+import { selectGameLauncherAction } from './PhoneGame';
+import './phoneFrame.css';
+
+const PAD_KEYS: { key: string; sub?: string }[] = [
+  { key: '1' },
+  { key: '2', sub: 'abc' },
+  { key: '3', sub: 'def' },
+  { key: '4', sub: 'ghi' },
+  { key: '5', sub: 'jkl' },
+  { key: '6', sub: 'mno' },
+  { key: '7', sub: 'pqrs' },
+  { key: '8', sub: 'tuv' },
+  { key: '9', sub: 'wxyz' },
+  { key: '*' },
+  { key: '0', sub: '+' },
+  { key: '#' },
+];
+
+const DIGIT_MENU: Record<number, PhoneScreen> = {
+  1: 'profile',
+  2: 'achievements',
+  3: 'projects',
+  4: 'skills',
+  5: 'experience',
+  6: 'contact',
+  7: 'farhan-os',
+  8: 'reset',
+  0: 'game-launcher',
+};
+
+const GAME_DIR: Record<string, string> = {
+  up: 'up',
+  down: 'down',
+  left: 'left',
+  right: 'right',
+};
 
 /**
- * Nokia 3310-inspired phone frame with CSS body, screen, and keypad.
+ * Nokia 3310–inspired handset: industrial body, LCD well, soft keys, nav, keypad.
  */
 export default function PhoneFrame() {
   const { state, dispatch, navigate, goBack } = usePhone();
+  const soft = getSoftKeyLabels(state.currentScreen, state.payload);
+  const playing = state.currentScreen === 'game-play';
 
-  const MENU_SCREENS = ['profile', 'projects', 'skills', 'achievements', 'contact', 'game-launcher', 'reset'] as const;
+  const runReset = () => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.removeItem('farhan-device-preference');
+    window.localStorage.removeItem('farhan-has-booted');
+    window.location.reload();
+  };
+
+  const handleBack = () => {
+    if (state.currentScreen === 'boot' || state.currentScreen === 'menu') return;
+    if (state.currentScreen === 'game-launcher' && state.payload?.gameHowTo) {
+      dispatch({ type: 'SET_PAYLOAD', payload: { gameHowTo: false } });
+      return;
+    }
+    goBack();
+  };
 
   const handleKey = (key: string) => {
+    if (playing) {
+      if (key === 'back') {
+        handleBack();
+        return;
+      }
+      if (key === 'select') {
+        emitGamePad('up', 'down');
+        window.setTimeout(() => emitGamePad('up', 'up'), 120);
+        return;
+      }
+      // Directional hold is handled via pointer handlers on the D-pad
+      return;
+    }
+
     switch (key) {
       case 'up':
         dispatch({ type: 'MOVE_CURSOR', direction: 'up' });
@@ -31,13 +103,23 @@ export default function PhoneFrame() {
         handleSelect();
         break;
       case 'back':
-        goBack();
+        handleBack();
         break;
       case 'options':
         if (state.currentScreen === 'boot') {
           navigate('menu');
+        } else if (state.currentScreen === 'menu') {
+          handleSelect();
         } else if (state.currentScreen === 'contact') {
-          window.open(getMailtoHref(), '_blank');
+          openContactSelection(state.selectedIndex);
+        } else if (state.currentScreen === 'game-launcher') {
+          if (!state.payload?.gameHowTo) navigate('game-play');
+        } else if (
+          state.currentScreen === 'projects' ||
+          state.currentScreen === 'achievements' ||
+          state.currentScreen === 'experience'
+        ) {
+          handleSelect();
         }
         break;
       case '*': {
@@ -49,7 +131,10 @@ export default function PhoneFrame() {
         }
         localStorage.setItem('farhan-muted', JSON.stringify(!muted));
         notifyMuteChanged();
-        dispatch({ type: 'SET_PAYLOAD', payload: { muted: !muted, toast: muted ? 'SOUND ON' : 'MUTED' } });
+        dispatch({
+          type: 'SET_PAYLOAD',
+          payload: { muted: !muted, toast: muted ? 'SOUND ON' : 'MUTED' },
+        });
         break;
       }
       case '#':
@@ -67,17 +152,16 @@ export default function PhoneFrame() {
         break;
       default: {
         const num = parseInt(key, 10);
-        if (!isNaN(num) && num >= 0 && num <= 9 && state.currentScreen === 'menu') {
-          const menuMap: Record<number, PhoneScreen> = {
-            1: 'profile',
-            2: 'projects',
-            3: 'skills',
-            4: 'achievements',
-            5: 'contact',
-            0: 'game-launcher',
-          };
-          const screen = menuMap[num];
-          if (screen) navigate(screen);
+        if (!isNaN(num) && state.currentScreen === 'menu') {
+          const screen = DIGIT_MENU[num];
+          if (screen === 'reset') {
+            runReset();
+          } else if (screen) {
+            navigate(screen);
+          }
+        } else if (!isNaN(num) && state.currentScreen === 'game-launcher' && !state.payload?.gameHowTo) {
+          if (num === 1) navigate('game-play');
+          if (num === 2) dispatch({ type: 'SET_PAYLOAD', payload: { gameHowTo: true } });
         }
         break;
       }
@@ -90,22 +174,19 @@ export default function PhoneFrame() {
         navigate('menu');
         break;
       case 'menu': {
-        const item = MENU_SCREENS[Math.min(state.selectedIndex, MENU_SCREENS.length - 1)];
-        if (item === 'reset') {
-          if (typeof window !== 'undefined') {
-            window.localStorage.removeItem('farhan-device-preference');
-            window.localStorage.removeItem('farhan-has-booted');
-            window.location.reload();
-          }
-        } else if (item) {
-          navigate(item); // item excludes 'reset' after guard
+        const item = MENU_ITEMS[Math.min(state.selectedIndex, MENU_ITEMS.length - 1)];
+        if (!item) break;
+        if (item.key === 'reset') {
+          runReset();
+        } else {
+          navigate(item.key);
         }
         break;
       }
       case 'projects': {
         const list = state.payload?.showArchived
           ? projectsData
-          : projectsData.filter(p => p.featured);
+          : projectsData.filter((p) => p.featured);
         const proj = list[Math.min(state.selectedIndex, Math.max(list.length - 1, 0))];
         if (proj) {
           navigate('project-detail', {
@@ -115,180 +196,158 @@ export default function PhoneFrame() {
         }
         break;
       }
-
       case 'contact':
-        window.open(getMailtoHref(), '_blank');
+        openContactSelection(state.selectedIndex);
         break;
+      case 'game-launcher': {
+        const action = selectGameLauncherAction(state.selectedIndex, state.payload);
+        if (action === 'start') navigate('game-play');
+        else if (action === 'how') dispatch({ type: 'SET_PAYLOAD', payload: { gameHowTo: true } });
+        else if (action === 'close-how')
+          dispatch({ type: 'SET_PAYLOAD', payload: { gameHowTo: false } });
+        break;
+      }
       default:
         break;
     }
   };
 
+  const gamePadBind = (dir: string) => {
+    const key = GAME_DIR[dir] ?? dir;
+    return {
+      onPointerDown: (e: ReactPointerEvent) => {
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+        emitGamePad(key, 'down');
+      },
+      onPointerUp: (e: ReactPointerEvent) => {
+        e.preventDefault();
+        emitGamePad(key, 'up');
+      },
+      onPointerCancel: () => emitGamePad(key, 'up'),
+    };
+  };
+
   return (
     <div
-      style={{
-        width: 'min(300px, calc(100vw - 2rem))',
-        background: 'var(--nokia-body)',
-        borderRadius: '28px 28px 36px 36px',
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '10px',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
-        border: '1px solid rgba(255, 255, 255, 0.05)',
-        position: 'relative',
-      }}
+      className={`nokia-device${playing ? ' nokia-device--playing' : ''}`}
+      aria-label="Farhan OS Nokia handset"
     >
-      <div style={{ display: 'flex', gap: '3px', padding: '4px 0' }}>
-        {[...Array(6)].map((_, i) => (
-          <div key={i} style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
-        ))}
+      <div className="nokia-earpiece">
+        <div className="nokia-grille" aria-hidden>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span key={i} />
+          ))}
+        </div>
+        <p className="nokia-brand-top">Farhan OS</p>
       </div>
 
-      <div
-        className="font-pixel"
-        style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.25)', letterSpacing: '3px' }}
-      >
-        FARHAN OS
+      <div className="nokia-bezel">
+        <div className="nokia-lcd nokia-glow">
+          <div className="nokia-lcd-inner">
+            <PhoneScreenComponent />
+          </div>
+        </div>
       </div>
 
-      <div
-        className="scanlines nokia-glow"
-        style={{
-          width: '100%',
-          height: 220,
-          background: 'var(--nokia-screen)',
-          borderRadius: '4px',
-          overflow: 'hidden',
-          position: 'relative',
-        }}
-      >
-        <PhoneScreenComponent />
-      </div>
-
-      <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', padding: '0 12px' }}>
-        <PhoneButton label="Options" onClick={() => handleKey('options')} />
-        <PhoneButton label="Back" onClick={() => handleKey('back')} />
-      </div>
-
-      <div
-        style={{
-          position: 'relative',
-          width: 100,
-          height: 100,
-          borderRadius: '50%',
-          background: 'rgba(0,0,0,0.3)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '4px 0',
-        }}
-      >
-        <button onClick={() => handleKey('up')} style={{ ...dpadStyle, top: 2, left: '50%', transform: 'translateX(-50%)' }} aria-label="Up">▲</button>
-        <button onClick={() => handleKey('down')} style={{ ...dpadStyle, bottom: 2, left: '50%', transform: 'translateX(-50%)' }} aria-label="Down">▼</button>
-        <button onClick={() => handleKey('left')} style={{ ...dpadStyle, left: 2, top: '50%', transform: 'translateY(-50%)' }} aria-label="Left">◄</button>
-        <button onClick={() => handleKey('right')} style={{ ...dpadStyle, right: 2, top: '50%', transform: 'translateY(-50%)' }} aria-label="Right">►</button>
+      <div className="nokia-softrow">
         <button
+          type="button"
+          className="nokia-soft"
+          onClick={() => handleKey('options')}
+          disabled={soft.left === '—'}
+          aria-label={soft.left}
+        >
+          {soft.left}
+        </button>
+        <button
+          type="button"
+          className="nokia-soft"
+          onClick={() => handleKey('back')}
+          disabled={soft.right === '—'}
+          aria-label={soft.right}
+        >
+          {soft.right}
+        </button>
+      </div>
+
+      <div className="nokia-nav" role="group" aria-label="Navigation">
+        <button
+          type="button"
+          className="nokia-dpad nokia-dpad--up"
+          onClick={playing ? undefined : () => handleKey('up')}
+          {...(playing ? gamePadBind('up') : {})}
+          aria-label="Up"
+        >
+          ▲
+        </button>
+        <button
+          type="button"
+          className="nokia-dpad nokia-dpad--down"
+          onClick={playing ? undefined : () => handleKey('down')}
+          {...(playing ? gamePadBind('down') : {})}
+          aria-label="Down"
+        >
+          ▼
+        </button>
+        <button
+          type="button"
+          className="nokia-dpad nokia-dpad--left"
+          onClick={playing ? undefined : () => handleKey('left')}
+          {...(playing ? gamePadBind('left') : {})}
+          aria-label="Left"
+        >
+          ◄
+        </button>
+        <button
+          type="button"
+          className="nokia-dpad nokia-dpad--right"
+          onClick={playing ? undefined : () => handleKey('right')}
+          {...(playing ? gamePadBind('right') : {})}
+          aria-label="Right"
+        >
+          ►
+        </button>
+        <button
+          type="button"
+          className="nokia-ok"
           onClick={() => handleKey('select')}
-          style={{
-            position: 'absolute',
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            background: 'rgba(67, 217, 124, 0.15)',
-            border: '1px solid rgba(67, 217, 124, 0.3)',
-            color: 'var(--nokia-green)',
-            fontSize: '8px',
-            fontFamily: 'var(--font-pixel)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          aria-label="Select"
+          {...(playing
+            ? {
+                onPointerDown: (e: ReactPointerEvent) => {
+                  e.preventDefault();
+                  emitGamePad('up', 'down');
+                },
+                onPointerUp: (e: ReactPointerEvent) => {
+                  e.preventDefault();
+                  emitGamePad('up', 'up');
+                },
+                onPointerCancel: () => emitGamePad('up', 'up'),
+              }
+            : {})}
+          aria-label={playing ? 'Jump' : 'Select'}
         >
           OK
         </button>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '6px',
-          width: '100%',
-          padding: '0 20px',
-        }}
-      >
-        {['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'].map((key) => (
+      <div className="nokia-pad" role="group" aria-label="Keypad">
+        {PAD_KEYS.map(({ key, sub }) => (
           <button
+            type="button"
             key={key}
+            className="nokia-key"
             onClick={() => handleKey(key)}
-            style={{
-              height: 32,
-              borderRadius: '6px',
-              background: 'rgba(0, 0, 0, 0.2)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              color: 'rgba(255, 255, 255, 0.5)',
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background 0.1s',
-            }}
+            disabled={playing}
+            aria-label={sub ? `${key} ${sub}` : key}
           >
-            {key}
+            <span>{key}</span>
+            {sub ? <small>{sub}</small> : null}
           </button>
         ))}
       </div>
 
-      <div
-        style={{
-          fontSize: '10px',
-          color: 'rgba(255, 255, 255, 0.12)',
-          letterSpacing: '2px',
-          padding: '4px 0',
-          fontWeight: 700,
-        }}
-      >
-        NOKIA
-      </div>
+      <p className="nokia-stamp">NOKIA</p>
     </div>
   );
 }
-
-function PhoneButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: '4px 12px',
-        background: 'transparent',
-        border: 'none',
-        color: 'rgba(255, 255, 255, 0.4)',
-        fontSize: '10px',
-        cursor: 'pointer',
-        fontFamily: 'var(--font-mono)',
-        transition: 'color 0.15s',
-      }}
-    >
-      {label}
-    </button>
-  );
-}
-
-const dpadStyle: React.CSSProperties = {
-  position: 'absolute',
-  width: 26,
-  height: 26,
-  background: 'transparent',
-  border: 'none',
-  color: 'rgba(255, 255, 255, 0.4)',
-  fontSize: '10px',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '4px',
-  padding: 0,
-};

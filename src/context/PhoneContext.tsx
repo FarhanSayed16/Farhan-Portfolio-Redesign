@@ -8,12 +8,16 @@ export type PhoneScreen =
   | 'boot'
   | 'menu'
   | 'profile'
+  | 'achievements'
   | 'projects'
   | 'project-detail'
   | 'skills'
-  | 'achievements'
+  | 'experience'
   | 'contact'
-  | 'game-launcher';
+  | 'game-launcher'
+  | 'game-play'
+  | 'farhan-os'
+  | 'reset';
 
 export interface PhoneState {
   currentScreen: PhoneScreen;

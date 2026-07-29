@@ -77,32 +77,33 @@ function playBuffer(key: keyof typeof AUDIO_FILES, volume: number, allowOverlap 
   }
 }
 
-function playWarp() {
+function playWarp(durationSec = 6.5) {
   if (!audioCtx) return;
   if (audioCtx.state === 'suspended') audioCtx.resume();
 
   try {
     const t = audioCtx.currentTime;
-    const dur = 5.2;
+    const dur = Math.max(4, Math.min(10, durationSec));
 
     // Noise buffer whoosh under the pitch ramp
     const noiseLen = Math.floor(audioCtx.sampleRate * dur);
     const noiseBuf = audioCtx.createBuffer(1, noiseLen, audioCtx.sampleRate);
     const data = noiseBuf.getChannelData(0);
     for (let i = 0; i < noiseLen; i++) {
-      data[i] = (Math.random() * 2 - 1) * (1 - i / noiseLen);
+      const env = Math.sin((i / noiseLen) * Math.PI); // swell mid-trip
+      data[i] = (Math.random() * 2 - 1) * env;
     }
     const noise = audioCtx.createBufferSource();
     noise.buffer = noiseBuf;
     const noiseFilter = audioCtx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.setValueAtTime(400, t);
-    noiseFilter.frequency.exponentialRampToValueAtTime(6000, t + dur);
-    noiseFilter.Q.value = 0.7;
+    noiseFilter.frequency.setValueAtTime(350, t);
+    noiseFilter.frequency.exponentialRampToValueAtTime(7000, t + dur);
+    noiseFilter.Q.value = 0.65;
     const noiseGain = audioCtx.createGain();
     noiseGain.gain.setValueAtTime(0, t);
-    noiseGain.gain.linearRampToValueAtTime(0.06, t + 0.4);
-    noiseGain.gain.linearRampToValueAtTime(0.1, t + dur - 0.8);
+    noiseGain.gain.linearRampToValueAtTime(0.05, t + 0.35);
+    noiseGain.gain.linearRampToValueAtTime(0.09, t + dur * 0.7);
     noiseGain.gain.linearRampToValueAtTime(0, t + dur);
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
@@ -110,35 +111,35 @@ function playWarp() {
     noise.start(t);
     noise.stop(t + dur);
 
-    // Main warp oscillator (ascending pitch)
+    // Main warp oscillator (ascending pitch) — synced to trip length
     const osc = audioCtx.createOscillator();
     osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(50, t);
-    osc.frequency.exponentialRampToValueAtTime(900, t + dur);
+    osc.frequency.setValueAtTime(55, t);
+    osc.frequency.exponentialRampToValueAtTime(820, t + dur);
 
     const lfo = audioCtx.createOscillator();
     lfo.type = 'sine';
-    lfo.frequency.setValueAtTime(4, t);
-    lfo.frequency.linearRampToValueAtTime(22, t + dur);
+    lfo.frequency.setValueAtTime(3.5, t);
+    lfo.frequency.linearRampToValueAtTime(18, t + dur);
 
     const lfoGain = audioCtx.createGain();
-    lfoGain.gain.setValueAtTime(180, t);
-    lfoGain.gain.linearRampToValueAtTime(900, t + dur);
+    lfoGain.gain.setValueAtTime(140, t);
+    lfoGain.gain.linearRampToValueAtTime(720, t + dur);
 
     lfo.connect(lfoGain);
     lfoGain.connect(osc.frequency);
 
     const gain = audioCtx.createGain();
     gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.12, t + 0.45);
-    gain.gain.setValueAtTime(0.12, t + dur - 0.55);
+    gain.gain.linearRampToValueAtTime(0.11, t + 0.4);
+    gain.gain.setValueAtTime(0.11, t + dur - 0.45);
     gain.gain.linearRampToValueAtTime(0, t + dur);
 
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.Q.value = 4;
-    filter.frequency.setValueAtTime(100, t);
-    filter.frequency.exponentialRampToValueAtTime(12000, t + dur);
+    filter.Q.value = 3.5;
+    filter.frequency.setValueAtTime(120, t);
+    filter.frequency.exponentialRampToValueAtTime(11000, t + dur);
 
     osc.connect(filter);
     filter.connect(gain);
@@ -197,7 +198,7 @@ export function useOSAudio() {
   const playStartup = useCallback(() => playBuffer('startup', 0.8), []);
   const playTyping = useCallback(() => playBuffer('typing', 0.4), []); // No overlap for typing
   const playPasswordScreen = useCallback(() => playBuffer('password', 0.8), []);
-  const playWarpCb = useCallback(() => playWarp(), []);
+  const playWarpCb = useCallback((durationSec?: number) => playWarp(durationSec), []);
   const playWarpLandCb = useCallback(() => playWarpLand(), []);
 
   return {

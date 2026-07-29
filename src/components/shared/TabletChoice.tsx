@@ -9,7 +9,8 @@ interface TabletChoiceProps {
 }
 
 /**
- * One-time choice for tablet users: Desktop OS or Nokia Phone.
+ * One-time choice for tablet users: Farhan OS (desktop) or modern portfolio site.
+ * Nokia phone is an easter egg inside the portfolio (Try Nokia / ?view=nokia).
  */
 export default function TabletChoice({ onChoose }: TabletChoiceProps) {
   const [, setPreference] = useLocalStorage<DeviceMode | null>('farhan-device-preference', null);
@@ -67,24 +68,34 @@ export default function TabletChoice({ onChoose }: TabletChoiceProps) {
             }}
           >
             <XpStartLogo size={28} />
-            Desktop OS
-            <span style={{ fontSize: 10, color: '#404040', fontWeight: 400 }}>Windows XP style</span>
+            Farhan OS
+            <span style={{ fontSize: 10, color: '#404040', fontWeight: 400 }}>Windows XP · Time Machine</span>
           </button>
           <button
             type="button"
             onClick={() => handleChoice('mobile')}
-            className="os-button"
             style={{
               width: 160,
               height: 100,
+              display: 'flex',
               flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
               gap: 8,
               fontSize: 12,
+              background: '#0a0a0a',
+              border: '1px solid #ef4444',
+              borderRadius: 8,
+              color: '#f1f5f9',
+              fontFamily: 'var(--font-outfit), sans-serif',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.15)',
+              padding: '12px',
             }}
           >
-            <span style={{ fontSize: 28 }}>📱</span>
-            Nokia Phone
-            <span style={{ fontSize: 10, color: '#404040', fontWeight: 400 }}>3310 style</span>
+            <span style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--font-body), sans-serif', color: '#ef4444' }}>Aa</span>
+            Portfolio site
+            <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 400 }}>Modern · Nokia easter egg</span>
           </button>
         </div>
       </div>

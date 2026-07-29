@@ -65,6 +65,7 @@ export class SFXSynth {
   playStomp() { this.playAudio('stomp'); }
   playBlock() { this.playAudio('block'); }
   playPowerup() { this.playAudio('powerup'); }
+  playOneup() { this.playAudio('oneup'); }
   playDie() { this.playAudio('die'); }
   playFlagpole() { this.playAudio('flagpole'); }
   playGameOver() { this.playAudio('gameover'); }

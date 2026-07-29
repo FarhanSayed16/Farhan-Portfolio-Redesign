@@ -1,0 +1,320 @@
+/* Boot splash — mobile gets the modern portfolio look; desktop keeps XP blue. */
+
+.boot-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.boot-splash-xp,
+.boot-splash-modern {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Desktop / tablet landscape: Windows XP classic boot screen */
+.boot-splash-xp {
+  background: #000;
+  color: #fff;
+  font-family: Tahoma, 'Segoe UI', system-ui, sans-serif;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10vh 0 15vh;
+}
+
+.xp-boot-logo-container {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.xp-boot-logo {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.xp-boot-ms {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  font-family: 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.xp-boot-win {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.xp-boot-xp {
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  font-size: 38px;
+  font-style: italic;
+  font-weight: 800;
+  color: #ff6a00;
+  margin-left: 2px;
+  text-shadow: 1px 1px 2px rgba(255, 106, 0, 0.4);
+
+}
+
+.xp-boot-loader {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.xp-boot-loader-bar {
+  width: 160px;
+  height: 14px;
+  border: 2px solid #b4b4b4;
+  border-radius: 4px;
+  padding: 1px;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+
+.xp-boot-loader-blocks {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 8px;
+  display: flex;
+  gap: 2px;
+  animation: xp-boot-scroll 2.5s infinite linear;
+}
+
+.xp-block {
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(to bottom, #4f85e8 0%, #2953cc 50%, #1a3899 100%);
+  border-radius: 1px;
+}
+
+@keyframes xp-boot-scroll {
+  0% {
+    transform: translateX(-40px);
+  }
+  100% {
+    transform: translateX(160px);
+  }
+}
+
+.boot-splash-modern {
+  display: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(239, 68, 68, 0.15), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(239, 68, 68, 0.08), transparent 50%),
+    #050505;
+  color: #f1f5f9;
+  font-family: var(--font-outfit), var(--font-body), system-ui, sans-serif;
+  gap: 24px;
+  padding: env(safe-area-inset-top, 0) 24px env(safe-area-inset-bottom, 0);
+  overflow: hidden;
+}
+
+.boot-splash-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(239, 68, 68, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 68, 68, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
+  mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.boot-splash-mark {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.boot-splash-mark-f {
+  font-family: var(--font-syne), Georgia, 'Times New Roman', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.04em;
+  z-index: 10;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+}
+
+.boot-splash-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(239, 68, 68, 0.5);
+  box-shadow: inset 0 0 12px rgba(239, 68, 68, 0.2), 0 0 24px rgba(239, 68, 68, 0.3);
+  animation: boot-splash-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.boot-splash-ring-2 {
+  inset: -12px;
+  border: 1px dashed rgba(239, 68, 68, 0.3);
+  animation: boot-splash-spin 8s linear infinite;
+  box-shadow: none;
+}
+
+.boot-splash-ring-3 {
+  inset: -24px;
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  border-top-color: rgba(239, 68, 68, 0.4);
+  animation: boot-splash-spin 4s linear infinite reverse;
+  box-shadow: none;
+}
+
+.boot-splash-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.boot-splash-brand {
+  margin: 0;
+  font-size: 14px;
+  font-family: var(--font-body, 'Space Grotesk'), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  animation: boot-splash-flicker 3s infinite;
+}
+
+.boot-splash-sub {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: #ef4444;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.boot-splash-bar-container {
+  position: relative;
+  width: 160px;
+  margin-top: 12px;
+  z-index: 2;
+}
+
+.boot-splash-bar {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.boot-splash-bar-fill {
+  display: block;
+  height: 100%;
+  width: 40%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, #ef4444, #fff);
+  animation: boot-splash-slide 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.boot-splash-bar-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 24px;
+  background: radial-gradient(ellipse at center, rgba(239, 68, 68, 0.3) 0%, transparent 70%);
+  opacity: 0.5;
+  filter: blur(4px);
+  z-index: 1;
+}
+
+@keyframes boot-splash-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+}
+
+@keyframes boot-splash-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes boot-splash-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  }
+  20%, 24%, 55% {
+    opacity: 0.4;
+    text-shadow: none;
+  }
+}
+
+@keyframes boot-splash-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+@media (max-width: 767px) {
+  .boot-splash-xp {
+    display: none;
+  }
+
+  .boot-splash-modern {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-splash-ring,
+  .boot-splash-bar-fill {
+    animation: none;
+  }
+
+  .boot-splash-bar-fill {
+    width: 100%;
+    opacity: 0.5;
+  }
+}

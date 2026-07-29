@@ -29,6 +29,8 @@ export interface SiteData {
     personalEmail?: string;
     github: string;
     linkedin: string;
+    /** E.164 digits only, e.g. 919867868597 */
+    whatsapp?: string;
   };
 }
 
@@ -145,6 +147,15 @@ export function getMailtoHref(subject?: string, body?: string): string {
   if (body) params.set('body', body);
   const q = params.toString();
   return q ? `${base}?${q}` : base;
+}
+
+/** WhatsApp click-to-chat (requires socialLinks.whatsapp as E.164 digits) */
+export function getWhatsAppHref(prefill?: string): string | null {
+  const raw = siteData.socialLinks.whatsapp?.replace(/\D/g, '');
+  if (!raw) return null;
+  const base = `https://wa.me/${raw}`;
+  if (!prefill) return base;
+  return `${base}?text=${encodeURIComponent(prefill)}`;
 }
 
 // ── DERIVED COUNTS ────────────────────────────────────────────
