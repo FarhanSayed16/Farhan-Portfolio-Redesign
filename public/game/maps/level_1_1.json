@@ -1552,7 +1552,7 @@
           "height": 32
         },
         {
-          "name": "Goomba",
+          "name": "Koopa",
           "type": "Enemy",
           "x": 600,
           "y": 384,
