@@ -1,42 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useDeviceMode, type DeviceMode } from '@/hooks/useDeviceMode';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import TabletChoice from '@/components/shared/TabletChoice';
+import BootSplash from '@/components/shared/BootSplash';
 import DesktopShell from '@/components/desktop/DesktopShell';
 import PhoneShell from '@/components/mobile/PhoneShell';
+import ModernPortfolioShell from '@/components/mobile/ModernPortfolioShell';
 
 /**
- * Root page — routes to the correct surface based on device mode.
+ * Root page — desktop Farhan OS · phone modern portfolio · QR is /connectQR.
+ * Nokia easter egg: /?view=nokia on phone/tablet-mobile.
  */
 export default function Home() {
+  return (
+    <Suspense fallback={<BootSplash />}>
+      <HomeInner />
+    </Suspense>
+  );
+}
+
+function HomeInner() {
   const deviceMode = useDeviceMode();
+  const searchParams = useSearchParams();
+  const nokiaEgg = searchParams.get('view') === 'nokia';
   const [tabletPreference, , prefHydrated] = useLocalStorage<DeviceMode | null>(
     'farhan-device-preference',
     null
   );
   const [chosenMode, setChosenMode] = useState<'desktop' | 'mobile' | null>(null);
 
-  // SSR / not-yet-mounted — or tablet waiting on preference hydrate (avoids choice flash)
   if (deviceMode === null || (deviceMode === 'tablet' && !prefHydrated && !chosenMode)) {
-    return (
-      <div
-        data-theme="xp"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
-          background: '#245edc',
-          color: '#fff',
-          fontFamily: 'var(--font-os)',
-          fontSize: 13,
-        }}
-      >
-        Loading…
-      </div>
-    );
+    return <BootSplash />;
   }
 
   if (deviceMode === 'desktop') {
@@ -44,7 +41,7 @@ export default function Home() {
   }
 
   if (deviceMode === 'mobile') {
-    return <PhoneShell />;
+    return nokiaEgg ? <PhoneShell easterEgg /> : <ModernPortfolioShell />;
   }
 
   const resolvedMode =
@@ -58,7 +55,7 @@ export default function Home() {
   }
 
   if (resolvedMode === 'mobile') {
-    return <PhoneShell />;
+    return nokiaEgg ? <PhoneShell easterEgg /> : <ModernPortfolioShell />;
   }
 
   return <TabletChoice onChoose={setChosenMode} />;

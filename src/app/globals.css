@@ -230,6 +230,21 @@
       0 0 8px var(--nokia-green),
       inset 0 0 20px rgba(26, 46, 26, 0.5);
   }
+
+  /* Fallback if phoneFrame.css not loaded — real scanlines live on .nokia-lcd */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 3px
+    );
+  }
 }
 
 noscript {
