@@ -1,0 +1,645 @@
+/* Mobile modern portfolio shell.
+   Scoped to .mps-* / .bv-modern-viewport--standalone — desktop IE must stay untouched. */
+
+/* ── Scroll: fixed scrollport (Android-reliable; body unlock alone was flaky) ── */
+html.mps-unlocked,
+html.mps-unlocked body,
+body.mps-unlocked {
+  height: 100% !important;
+  overflow: hidden !important;
+  background: #050505;
+  -webkit-text-size-adjust: 100%;
+}
+
+.mps-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  background: #050505;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* ── Bottom nav ──────────────────────────────────────────────── */
+.mps-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+  background: rgba(10, 10, 13, 0.97);
+  border-top: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.55);
+  font-family: var(--bv-font, 'Inter', -apple-system, sans-serif);
+}
+
+.mps-nav-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px 2px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(246, 241, 231, 0.6);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mps-nav-btn.is-active {
+  color: #fff;
+  background: rgba(239, 68, 68, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.32);
+}
+
+.mps-nav-btn.is-active svg {
+  color: #ef4444;
+}
+
+.mps-nav-btn:active {
+  transform: scale(0.97);
+}
+
+.mps-nav-egg {
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.24), rgba(239, 68, 68, 0.1));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.mps-nav-egg:active {
+  transform: scale(0.97);
+}
+
+.footer-standalone-hint {
+  font-size: 11px;
+  opacity: 0.5;
+  letter-spacing: 0.04em;
+}
+
+/* ── Paint budget ────────────────────────────────────────────── */
+
+.bv-modern-viewport--standalone *,
+.bv-modern-viewport--standalone *::before,
+.bv-modern-viewport--standalone *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  will-change: auto !important;
+}
+
+.bv-modern-viewport--standalone,
+.bv-modern-viewport--standalone *,
+.bv-modern-viewport--standalone a,
+.bv-modern-viewport--standalone button {
+  cursor: auto !important;
+}
+
+.bv-modern-viewport--standalone,
+.bv-modern-viewport--standalone .bv-modern {
+  height: auto !important;
+  overflow: visible !important;
+  background: transparent;
+}
+
+.bv-modern-viewport--standalone .bv-modern-atmosphere {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.bv-modern-viewport--standalone .bv-section,
+.bv-modern-viewport--standalone .bv-showcase,
+.bv-modern-viewport--standalone .bv-contact-section-premium {
+  contain: layout paint style;
+}
+
+.bv-modern-viewport--standalone .bv-section,
+.bv-modern-viewport--standalone .bv-showcase,
+.bv-modern-viewport--standalone .bv-contact-section-premium,
+.bv-modern-viewport--standalone .bv-hero {
+  scroll-margin-top: 8px;
+}
+
+.bv-modern-viewport--standalone .bv-laser-divider-container {
+  height: 1px;
+  margin: 4px 0;
+}
+
+.bv-modern-viewport--standalone .bv-laser-beam,
+.bv-modern-viewport--standalone .bv-laser-center-box {
+  display: none;
+}
+
+.bv-modern-viewport--standalone .bv-laser-track {
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.28), transparent);
+}
+
+.bv-modern-viewport--standalone .bv-marquee-section {
+  display: none;
+}
+
+.bv-modern-viewport--standalone .bv-scroll-content {
+  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Hero — tighter, SIH on photo; type inherits desktop modern (Inter / JetBrains Mono) ── */
+
+.bv-modern-viewport--standalone {
+  /* Use Outfit for body and Space Grotesk for headings on the modern mobile site */
+  --bv-font: var(--font-outfit, 'Inter'), -apple-system, sans-serif;
+  --bv-display: var(--font-body, 'Space Grotesk'), sans-serif;
+  --bv-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: var(--bv-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+.bv-modern-viewport--standalone .bv-hero {
+  padding: 12px 16px 0;
+}
+
+.bv-modern-viewport--standalone .bv-hero-grid {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+}
+
+.bv-modern-viewport--standalone .bv-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 6px;
+}
+
+.bv-modern-viewport--standalone .bv-hero-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+  color: #fca5a5;
+  letter-spacing: 0.16em;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+.bv-modern-viewport--standalone .bv-hero-role::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+.bv-modern-viewport--standalone .bv-hero-name {
+  font-family: var(--bv-display);
+  font-size: clamp(40px, 11vw, 56px);
+  line-height: 0.95;
+  margin: 0;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.bv-modern-viewport--standalone .bv-hero-lead {
+  max-width: 28ch;
+  margin: 4px 0 0;
+  color: rgba(241, 245, 249, 0.72);
+}
+
+.bv-modern-viewport--standalone .bv-cta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.bv-modern-viewport--standalone .bv-cta-row .bv-btn {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 650;
+  border-radius: 12px;
+}
+
+.bv-modern-viewport--standalone .bv-cta-row .bv-btn-primary {
+  box-shadow: 0 8px 24px -6px rgba(239, 68, 68, 0.4);
+}
+
+.bv-modern-viewport--standalone .bv-hero-meta {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.bv-modern-viewport--standalone .bv-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #f1f5f9;
+}
+
+.bv-modern-viewport--standalone .bv-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981, 0 0 4px #10b981 inset;
+  animation: bv-pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes bv-pulse-dot {
+  0% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.5; transform: scale(0.9); }
+}
+
+/* Portrait circle + on-image SIH pill */
+.bv-modern-viewport--standalone .bv-hero-visual {
+  width: 100%;
+  max-width: 170px;
+  margin-inline: auto;
+}
+
+.bv-modern-viewport--standalone .bv-portrait-stage {
+  width: 100%;
+  padding: 6px;
+}
+
+.bv-modern-viewport--standalone .bv-portrait-ring {
+  inset: 0;
+  aspect-ratio: 1;
+  height: auto;
+  transform: none;
+  filter: blur(16px);
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.4), transparent 70%);
+  opacity: 0.8;
+}
+
+.bv-modern-viewport--standalone .bv-portrait-card {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  transform: none !important;
+  transform-style: flat;
+}
+
+.bv-modern-viewport--standalone .bv-portrait-frame {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  transform: none;
+  border: 2px solid rgba(239, 68, 68, 0.42);
+  box-shadow:
+    0 0 0 4px rgba(239, 68, 68, 0.08),
+    0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.bv-modern-viewport--standalone .bv-portrait-img {
+  object-position: 30% 16%;
+  transform: scale(1.08);
+}
+
+/* Compact pill on the photo — now outside the clipped frame, relative to .bv-portrait-card */
+.bv-modern-viewport--standalone .bv-portrait-caption {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% + 20px);
+  padding: 5px 12px;
+  gap: 1px;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  z-index: 5;
+}
+
+.bv-modern-viewport--standalone .bv-portrait-caption strong {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+}
+
+.bv-modern-viewport--standalone .bv-portrait-caption span {
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f87171;
+  line-height: 1.2;
+}
+
+/* Section rhythm */
+.bv-modern-viewport--standalone .bv-section {
+  padding: 20px 16px;
+}
+
+/* Why I Build section — tighter h2 margin */
+.bv-modern-viewport--standalone .bv-section-label {
+  margin-bottom: 16px !important;
+}
+
+.bv-modern-viewport--standalone .bv-section h2,
+.bv-modern-viewport--standalone .bv-section-label {
+  font-family: var(--bv-display);
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 16px !important;
+}
+
+.bv-modern-viewport--standalone .bv-text-highlight {
+  color: #ef4444;
+}
+
+.bv-modern-viewport--standalone .bv-story-headline {
+  font-family: var(--bv-display);
+  font-size: clamp(24px, 6.5vw, 30px);
+  line-height: 1.2;
+}
+
+.bv-modern-viewport--standalone .bv-story-text {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: rgba(241, 245, 249, 0.72);
+}
+
+/* Project carousel */
+.bv-modern-viewport--standalone .bv-showcase {
+  padding: 24px 0;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-inner {
+  padding: 0 16px;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-stage {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  perspective: none !important;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-card {
+  grid-column: 1 / -1;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-radius: 16px;
+  background: rgba(13, 17, 23, 0.92);
+  transform: none !important;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-visual {
+  aspect-ratio: 16 / 10;
+  padding: 16px;
+  border-right: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bv-modern-viewport--standalone .bv-showcase-num {
+  font-size: 40px;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-info {
+  padding: 18px;
+  gap: 6px;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-title {
+  font-size: 22px;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-arrow {
+  position: static;
+  transform: none;
+  width: 44px;
+  height: 44px;
+  left: auto;
+  right: auto;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.bv-modern-viewport--standalone .bv-showcase-arrow--left {
+  justify-self: start;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-arrow--right {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-dots {
+  margin-top: 14px;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Story + stats */
+.bv-modern-viewport--standalone .bv-story-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bv-modern-viewport--standalone .bv-stats-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 16px;
+}
+
+.bv-modern-viewport--standalone .bv-stat-number {
+  color: #fff;
+}
+
+.bv-modern-viewport--standalone .bv-stat-plus {
+  color: #ef4444;
+}
+
+/* Award cards — Space Grotesk for headings, Outfit for body */
+.bv-modern-viewport--standalone .hof-bento-title,
+.bv-modern-viewport--standalone .hof-cert-name {
+  font-family: var(--bv-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.bv-modern-viewport--standalone .hof-bento-desc,
+.bv-modern-viewport--standalone .hof-cert-description {
+  font-family: var(--bv-font);
+}
+
+.bv-modern-viewport--standalone .hof-bento-tag,
+.bv-modern-viewport--standalone .hof-bento-year,
+.bv-modern-viewport--standalone .hof-cert-issuer,
+.bv-modern-viewport--standalone .hof-cert-date {
+  font-family: var(--bv-font);
+  letter-spacing: 0.06em;
+}
+
+/* Stacks */
+.bv-stacks-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.bv-stacks-container--mobile {
+  padding: 14px !important;
+  gap: 9px !important;
+  border-radius: 18px !important;
+  background: rgba(16, 14, 17, 0.92) !important;
+  border: 1px solid rgba(239, 68, 68, 0.22) !important;
+  box-shadow: none !important;
+}
+
+.bv-modern-viewport--standalone .bv-stack-badge {
+  margin: 0 !important;
+  padding: 8px 13px;
+  font-size: 12.5px;
+  border-color: rgba(239, 68, 68, 0.22);
+  background: rgba(20, 20, 24, 0.95);
+  box-shadow: none;
+}
+
+.bv-stacks-toggle {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 650;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.bv-stacks-toggle:active {
+  transform: scale(0.98);
+}
+
+.bv-stacks-chevron {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  color: #ef4444;
+}
+
+.bv-stacks-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+/* GitHub strip */
+.bv-hud-grid-wrapper--compact .bv-hud-container {
+  padding: 14px 12px;
+  border-radius: 16px;
+  max-width: 100%;
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(10, 12, 16, 0.95);
+}
+
+.bv-hud-grid-wrapper--compact .bv-hud-grid-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  justify-content: flex-start;
+  max-width: 100%;
+  padding-bottom: 4px;
+}
+
+.bv-hud-grid-wrapper--compact .bv-hud-grid {
+  width: max-content;
+}
+
+.bv-hud-grid-wrapper--compact .bv-hud-cell {
+  width: 9px;
+  height: 9px;
+}
+
+/* Contact + footer */
+.bv-modern-viewport--standalone .premium-contact-title {
+  font-size: clamp(26px, 8vw, 34px);
+}
+
+.bv-modern-viewport--standalone .premium-contact-actions {
+  flex-direction: column;
+  width: 100%;
+}
+
+.bv-modern-viewport--standalone .cyber-btn-primary,
+.bv-modern-viewport--standalone .cyber-btn-secondary {
+  width: 100%;
+  justify-content: center;
+  min-height: 48px;
+}
+
+.bv-modern-viewport--standalone .premium-contact-container {
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.bv-modern-viewport--standalone .premium-contact-bg-glow {
+  display: none;
+}
+
+.bv-modern-viewport--standalone .premium-footer-content {
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+  font-size: 11px;
+}

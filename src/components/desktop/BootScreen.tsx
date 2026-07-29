@@ -1,30 +1,29 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useOSAudio } from '@/lib/useOSAudio';
 import { XpStartLogo } from './XpIcons';
 import { siteData } from '@/lib/content';
+import './bootScreen.css';
 
 type BootPhase = 'power' | 'bios' | 'progress' | 'login' | 'done';
 
 const BIOS_LINES = [
-  'Farhan OS (v3.0.0) [Boot Sequence Initiated]',
-  'Copyright (C) 2026 Farhan Sayed. All rights reserved.',
+  'FarhanBIOS 3.0 — Copyright (C) 2026 Farhan Sayed',
+  'CPU: AI & Full-Stack Engineer @ 3.0GHz',
+  'Memory Test: 128MB OK',
   '',
-  '[SYSTEM CHECK]',
-  'CPU: Neuro-Synced Processor',
-  'MEM: 128TB Quantum RAM ......... [OK]',
-  'GPU: Reality Rendering Engine .... [OK]',
+  'Detecting IDE drives...',
+  '  Primary Master: FARHAN-SSD ......... [OK]',
+  '  Primary Slave:  None',
   '',
-  '[MODULES LOADING]',
-  '>> Loading AI Subsystems ......... [OK]',
-  '>> Loading Robotics Protocols .... [OK]',
-  '>> Initializing SIH Trophy ....... [ACQUIRED]',
-  '>> Mounting Projects (11) ........ [MOUNTED]',
+  'Loading modules...',
+  '  Projects (11) ...................... [OK]',
+  '  SIH 2025 National Trophy ........... [OK]',
+  '  Contact stack ...................... [OK]',
   '',
-  'System integrity verified. Ready to launch.',
+  'Press any key to skip boot...',
   'Starting Farhan OS...',
 ];
 
@@ -32,28 +31,48 @@ interface BootScreenProps {
   onComplete: () => void;
 }
 
+function PowerGlyph() {
+  return (
+    <svg className="boot-power-btn-icon" viewBox="0 0 24 24" aria-hidden>
+      {/* Classic physical power mark: stem + arc (not a flat Unicode emoji) */}
+      <path
+        d="M12 3v9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M7.2 6.4a7.2 7.2 0 1 0 9.6 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export default function BootScreen({ onComplete }: BootScreenProps) {
   const [phase, setPhase] = useState<BootPhase>('power');
   const [biosIndex, setBiosIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [isMuted] = useLocalStorage('farhan-muted', false);
   const { playStartup, playTyping, playPasswordScreen } = useOSAudio();
   const [shutdownClicks, setShutdownClicks] = useState(0);
 
   const shutdownMessages = [
-    "Turn off computer",
+    'Turn off computer',
     "Wait, you're leaving already?",
-    "Did you even check out my projects?",
-    "A true developer never quits.",
-    "Okay, fine... restarting system...."
+    'Did you even check out my projects?',
+    'A true developer never quits.',
+    'Okay, fine... restarting system....',
   ];
 
-  const handleShutdownClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
+  const bumpShutdown = useCallback(() => {
     if (shutdownClicks < shutdownMessages.length - 2) {
-      setShutdownClicks(c => c + 1);
+      setShutdownClicks((c) => c + 1);
     } else if (shutdownClicks === shutdownMessages.length - 2) {
-      setShutdownClicks(c => c + 1);
+      setShutdownClicks((c) => c + 1);
       setTimeout(() => {
         setShutdownClicks(0);
         setPhase('power');
@@ -62,6 +81,14 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
       }, 2000);
     }
   }, [shutdownClicks, shutdownMessages.length]);
+
+  const handleShutdownClick = useCallback(
+    (e: React.SyntheticEvent) => {
+      e.stopPropagation();
+      bumpShutdown();
+    },
+    [bumpShutdown]
+  );
 
   useEffect(() => {
     if (phase !== 'bios') return;
@@ -107,81 +134,88 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
     onComplete();
   }, [onComplete, playStartup]);
 
+  const powerOn = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    setPhase('bios');
+  };
+
   if (phase === 'done') return null;
+
+  const shellClass =
+    phase === 'login'
+      ? 'boot-screen boot-screen--login'
+      : phase === 'progress'
+        ? 'boot-screen boot-screen--dark'
+        : phase === 'bios' || phase === 'power'
+          ? 'boot-screen boot-screen--dark'
+          : 'boot-screen boot-screen--xp';
 
   return (
     <div
-      onClick={phase === 'login' ? undefined : handleSkip}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: phase === 'bios' || phase === 'power' ? '#000' : '#245edc',
-        display: 'flex',
-        flexDirection: 'column',
-        cursor: phase === 'login' ? 'default' : 'pointer',
-        overflow: 'hidden',
-        fontFamily: 'var(--font-os)',
-      }}
+      className={shellClass}
+      onClick={phase === 'login' || phase === 'power' ? undefined : handleSkip}
+      role="presentation"
     >
       <AnimatePresence mode="wait">
         {phase === 'power' && (
           <motion.div
             key="power"
+            className="boot-power"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
           >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                // We play a brief silent sound or just start to unlock the context
-                setPhase('bios');
-              }}
-              style={{
-                background: 'transparent',
-                border: '2px solid #3c8a3c',
-                color: '#3c8a3c',
-                padding: '16px 32px',
-                fontSize: '18px',
-                fontFamily: 'var(--font-mono)',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#3c8a3c';
-                e.currentTarget.style.color = '#000';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = '#3c8a3c';
-              }}
-            >
-              Power On
-            </button>
+            <div className="boot-power-plate">
+              <div className="boot-power-brand">Turn on PC</div>
+
+              <div className="boot-power-leds" aria-hidden>
+                <div className="boot-led">
+                  <span className="boot-led-dot boot-led-dot--standby" />
+                  <span className="boot-led-label">Power</span>
+                </div>
+                <div className="boot-led">
+                  <span className="boot-led-dot boot-led-dot--hdd" />
+                  <span className="boot-led-label">HDD</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="boot-power-btn"
+                aria-label="Power On"
+                onClick={powerOn}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    powerOn(e);
+                  }
+                }}
+              >
+                <PowerGlyph />
+              </button>
+            </div>
+
+            <div className="boot-power-caption">
+              <p className="boot-power-title">POWER ON</p>
+              <p className="boot-power-hint">Press the power button to start Farhan OS</p>
+            </div>
           </motion.div>
         )}
 
         {phase === 'bios' && (
           <motion.div
             key="bios"
+            className="boot-bios"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ flex: 1, padding: '2rem', color: '#c0c0c0', fontFamily: 'var(--font-mono)', fontSize: 13 }}
           >
             {BIOS_LINES.slice(0, biosIndex).map((line, i) => (
-              <div key={i} style={{ lineHeight: 1.7, color: i === 0 ? '#fff' : '#c0c0c0' }}>
-                {line}
+              <div
+                key={i}
+                className={`boot-bios-line${i === 0 ? ' boot-bios-line--head' : ''}`}
+              >
+                {line || '\u00a0'}
               </div>
             ))}
           </motion.div>
@@ -190,41 +224,29 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
         {phase === 'progress' && (
           <motion.div
             key="progress"
+            className="boot-progress"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 24,
-              color: '#fff',
-            }}
           >
-            <XpStartLogo size={48} />
-            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: 1 }}>Farhan OS</div>
-            <div style={{ fontSize: 12, opacity: 0.85 }}>Please wait…</div>
-            <div
-              style={{
-                width: 280,
-                maxWidth: '70vw',
-                height: 18,
-                background: '#0a246a',
-                border: '2px solid #fff',
-                padding: 2,
-              }}
-            >
-              <div
-                style={{
-                  height: '100%',
-                  width: `${progress}%`,
-                  background: 'linear-gradient(90deg, #3c8a3c, #5eba5e, #3c8a3c)',
-                  backgroundSize: '40px 100%',
-                }}
-              />
+            <div className="boot-progress-logo-row">
+              <span className="boot-progress-ms">Microsoft</span>
+              <span className="boot-progress-win">OS</span>
+              <sup className="boot-progress-xp">XP</sup>
             </div>
+            <div className="boot-progress-spacer" />
+            <div className="boot-progress-loader" aria-hidden>
+              <div className="boot-progress-blocks">
+                {/* Duplicate strips so the scroll loop never gaps */}
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <span key={i} className="boot-progress-block" />
+                ))}
+              </div>
+            </div>
+            {/* Keep progress state ticking so phase advances; bar is the XP marquee */}
+            <span className="boot-sr-only" aria-live="polite">
+              Loading {progress}%
+            </span>
           </motion.div>
         )}
 
@@ -239,18 +261,57 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              background: '#5a7edc', // Classic XP base blue
+              background: '#5a7edc',
               position: 'relative',
               fontFamily: 'Tahoma, "Segoe UI", sans-serif',
             }}
           >
-            {/* Top and Bottom Bands */}
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100px', background: 'linear-gradient(180deg, #1c3280 0%, #2954ab 100%)' }} />
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '100px', background: 'linear-gradient(180deg, #4b71d6 0%, #1c3280 100%)' }} />
-            
-            {/* The main horizontal dividing line */}
-            <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent 0%, #85a2f2 20%, #85a2f2 80%, transparent 100%)', transform: 'translateY(-50%)', opacity: 0.6 }} />
-            <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '20px', background: 'linear-gradient(90deg, transparent 0%, rgba(133, 162, 242, 0.15) 20%, rgba(133, 162, 242, 0.15) 80%, transparent 100%)', transform: 'translateY(-50%)' }} />
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '100px',
+                background: 'linear-gradient(180deg, #1c3280 0%, #2954ab 100%)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '100px',
+                background: 'linear-gradient(180deg, #4b71d6 0%, #1c3280 100%)',
+              }}
+            />
+
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                right: 0,
+                height: '2px',
+                background:
+                  'linear-gradient(90deg, transparent 0%, #85a2f2 20%, #85a2f2 80%, transparent 100%)',
+                transform: 'translateY(-50%)',
+                opacity: 0.6,
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                right: 0,
+                height: '20px',
+                background:
+                  'linear-gradient(90deg, transparent 0%, rgba(133, 162, 242, 0.15) 20%, rgba(133, 162, 242, 0.15) 80%, transparent 100%)',
+                transform: 'translateY(-50%)',
+              }}
+            />
 
             <div
               style={{
@@ -262,57 +323,109 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
                 zIndex: 1,
               }}
             >
-              {/* Left Side: Logo and instructions */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingRight: '40px' }}>
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-end',
+                  paddingRight: '40px',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  <span style={{ fontSize: '36px', fontWeight: 700, color: '#fff', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontStyle: 'italic' }}>Farhan</span>
-                  <span style={{ fontSize: '36px', fontWeight: 400, color: '#ffb900', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>OS</span>
+                  <span
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 700,
+                      color: '#fff',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    Farhan
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 400,
+                      color: '#ffb900',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                    }}
+                  >
+                    OS
+                  </span>
                 </div>
-                <div style={{ fontSize: '14px', color: '#e0e5f5', marginTop: '4px' }}>To begin, click your user name</div>
+                <div style={{ fontSize: '14px', color: '#e0e5f5', marginTop: '4px' }}>
+                  To begin, click your user name
+                </div>
               </div>
 
-              {/* Vertical Divider */}
-              <div style={{ width: '1px', height: '180px', background: 'linear-gradient(180deg, transparent 0%, #fff 50%, transparent 100%)', opacity: 0.4 }} />
+              <div
+                style={{
+                  width: '1px',
+                  height: '180px',
+                  background: 'linear-gradient(180deg, transparent 0%, #fff 50%, transparent 100%)',
+                  opacity: 0.4,
+                }}
+              />
 
-              {/* Right Side: User login */}
-              <div style={{ flex: 1, paddingLeft: '40px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                
-                {/* Authentic XP Picture Frame */}
-                <div style={{
-                  width: '72px',
-                  height: '72px',
-                  background: '#fff',
-                  borderTop: '2px solid #ffb900',
-                  borderLeft: '2px solid #ffb900',
-                  borderRight: '2px solid #a67800',
-                  borderBottom: '2px solid #a67800',
-                  borderRadius: '4px',
+              <div
+                style={{
+                  flex: 1,
+                  paddingLeft: '40px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '3px 3px 6px rgba(0,0,0,0.4)',
-                }}>
-                  <div style={{
-                    width: '64px',
-                    height: '64px',
-                    border: '1px solid #000',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    width: '72px',
+                    height: '72px',
+                    background: '#fff',
+                    borderTop: '2px solid #ffb900',
+                    borderLeft: '2px solid #ffb900',
+                    borderRight: '2px solid #a67800',
+                    borderBottom: '2px solid #a67800',
+                    borderRadius: '4px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: '#f0f0f0'
-                  }}>
+                    boxShadow: '3px 3px 6px rgba(0,0,0,0.4)',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      border: '1px solid #000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#f0f0f0',
+                    }}
+                  >
                     <XpStartLogo size={40} />
                   </div>
                 </div>
-                
+
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <div style={{ fontSize: '24px', fontWeight: 700, color: '#fff', textShadow: '1px 1px 2px rgba(0,0,0,0.6)', marginBottom: '4px' }}>{siteData.name}</div>
-                  
-                  {/* Password Input Area */}
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 700,
+                      color: '#fff',
+                      textShadow: '1px 1px 2px rgba(0,0,0,0.6)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {siteData.name}
+                  </div>
+
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '8px' }}>
-                    <input 
-                      type="password" 
-                      placeholder="Type your password" 
+                    <input
+                      type="password"
+                      placeholder="Type your password"
                       disabled
                       style={{
                         padding: '4px 6px',
@@ -326,10 +439,11 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
                         width: '160px',
                         color: '#000',
                         fontFamily: 'Tahoma, sans-serif',
-                        cursor: 'not-allowed'
+                        cursor: 'not-allowed',
                       }}
                     />
-                    <button 
+                    <button
+                      type="button"
                       onClick={handleLogin}
                       style={{
                         background: 'linear-gradient(180deg, #387bd5 0%, #20509a 100%)',
@@ -341,43 +455,94 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: 'pointer',
-                        boxShadow: 'inset 1px 1px 1px rgba(255,255,255,0.4), 1px 1px 2px rgba(0,0,0,0.3)'
+                        boxShadow:
+                          'inset 1px 1px 1px rgba(255,255,255,0.4), 1px 1px 2px rgba(0,0,0,0.3)',
                       }}
                       title="Log On"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="square">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="4"
+                        strokeLinecap="square"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7" />
                       </svg>
                     </button>
                   </div>
-                  <div style={{ fontSize: '11px', color: '#c0c8e0', marginTop: '8px', letterSpacing: '0.5px' }}>AI & FULL-STACK ENGINEER</div>
+                  <div
+                    style={{
+                      fontSize: '11px',
+                      color: '#c0c8e0',
+                      marginTop: '8px',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    AI & FULL-STACK ENGINEER
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Bottom Left: Turn off computer */}
-            <div 
+            <div
               onClick={handleShutdownClick}
-              style={{ position: 'absolute', bottom: '24px', left: '32px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleShutdownClick(e);
+                }
+              }}
+              style={{
+                position: 'absolute',
+                bottom: '24px',
+                left: '32px',
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                cursor: 'pointer',
+              }}
             >
-              <div style={{ 
-                width: '32px', 
-                height: '32px', 
-                background: 'linear-gradient(180deg, #f04e3a 0%, #c41e0a 100%)', 
-                borderRadius: '4px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                border: '1px solid #7a0c00',
-                boxShadow: 'inset 1px 1px 1px rgba(255,255,255,0.4), 1px 1px 3px rgba(0,0,0,0.4)',
-                transform: shutdownClicks > 0 ? 'scale(0.95)' : 'scale(1)',
-                transition: 'transform 0.1s'
-              }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round">
-                  <path d="M12 2v10M18.36 6.64a9 9 0 1 1-12.73 0"/>
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  background: 'linear-gradient(180deg, #f04e3a 0%, #c41e0a 100%)',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #7a0c00',
+                  boxShadow:
+                    'inset 1px 1px 1px rgba(255,255,255,0.4), 1px 1px 3px rgba(0,0,0,0.4)',
+                  transform: shutdownClicks > 0 ? 'scale(0.95)' : 'scale(1)',
+                  transition: 'transform 0.1s',
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                >
+                  <path d="M12 2v10M18.36 6.64a9 9 0 1 1-12.73 0" />
                 </svg>
               </div>
-              <span style={{ color: '#fff', fontSize: '14px', textShadow: '1px 1px 2px rgba(0,0,0,0.6)', transition: 'all 0.3s' }}>
+              <span
+                style={{
+                  color: '#fff',
+                  fontSize: '14px',
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.6)',
+                  transition: 'all 0.3s',
+                }}
+              >
                 {shutdownMessages[shutdownClicks]}
               </span>
             </div>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, RotateCw, Globe } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useWindows } from '@/context/WindowContext';
 import { BrowserTimeMachine } from './browser/BrowserTimeMachine';
 import { ModernSite } from './browser/ModernSite';
 import './browser/browserTheme.css';
@@ -29,6 +30,7 @@ if (typeof window !== 'undefined') {
  * Browser.exe — IE chrome stays; page viewport runs Time Machine → modern portfolio.
  */
 export default function BrowserWindow() {
+  const { dispatch } = useWindows();
   const [phase, setPhase] = useState<Phase>(() => (erasPlayedThisVisit ? 'modern' : 'eras'));
   const [addressValue, setAddressValue] = useState('https://farhanbuilds.in');
   const [history, setHistory] = useState<string[]>(['https://farhanbuilds.in']);
@@ -206,7 +208,25 @@ export default function BrowserWindow() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               style={{ height: '100%' }}
             >
-              <ModernSite onReplayEras={replayEras} />
+              <ModernSite
+                onReplayEras={replayEras}
+                onOpenProjects={() =>
+                  dispatch({
+                    type: 'OPEN',
+                    id: 'projects',
+                    title: 'Projects — Explorer',
+                    component: 'projects',
+                  })
+                }
+                onOpenContact={() =>
+                  dispatch({
+                    type: 'OPEN',
+                    id: 'contact',
+                    title: 'Contact — New Message',
+                    component: 'contact',
+                  })
+                }
+              />
             </motion.div>
           )}
         </AnimatePresence>

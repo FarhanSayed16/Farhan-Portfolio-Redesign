@@ -23,8 +23,8 @@ import {
   stats,
   getEmailAddress,
   getMailtoHref,
+  getWhatsAppHref,
 } from '@/lib/content';
-import { useWindows } from '@/context/WindowContext';
 import { TestimonialSlider } from './TestimonialSlider';
 import { ProjectShowcase } from './ProjectShowcase';
 import { FloatingDock } from './FloatingDock';
@@ -36,23 +36,35 @@ import { Mail, Terminal, ArrowUpRight } from 'lucide-react';
 import Lenis from 'lenis';
 
 interface ModernSiteProps {
-  onReplayEras: () => void;
+  /** Desktop IE only — hidden on mobile standalone (no Time Machine on phones). */
+  onReplayEras?: () => void;
+  /** Desktop: open Projects window. Standalone: falls back to in-page scroll. */
+  onOpenProjects?: () => void;
+  /** Desktop: open Contact window. Standalone: falls back to #bv-contact. */
+  onOpenContact?: () => void;
+  /** Full-page mobile portfolio (not inside XP browser). */
+  standalone?: boolean;
 }
 
-const GithubIcon = ({ size, className }: { size: number, className?: string }) => (
+const ease = [0.16, 1, 0.3, 1] as const;
+
+const GithubIcon = ({ size, className }: { size: number; className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
   </svg>
 );
 
-const LinkedinIcon = ({ size, className }: { size: number, className?: string }) => (
+const LinkedinIcon = ({ size, className }: { size: number; className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
     <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
   </svg>
 );
 
-
-const ease = [0.16, 1, 0.3, 1] as const;
+const WhatsappIcon = ({ size, className }: { size: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+  </svg>
+);
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -63,8 +75,12 @@ const fadeUp = {
   }),
 };
 
-export function ModernSite({ onReplayEras }: ModernSiteProps) {
-  const { dispatch } = useWindows();
+export function ModernSite({
+  onReplayEras,
+  onOpenProjects,
+  onOpenContact,
+  standalone = false,
+}: ModernSiteProps) {
   const reduceMotion = useReducedMotion();
   const featured = projectsData.filter((p) => p.featured && !p.archived).slice(0, 5);
   const aboutBlurb = aboutData.bio.split('\n\n')[0] ?? aboutData.bio;
@@ -157,55 +173,64 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
     'Raspberry Pi',
   ].filter((s) => s in SKILL_ICONS);
 
-  // Scroll progress and Lenis
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ container: scrollContainerRef });
+  // Standalone scrolls the document (native, compositor-friendly); embedded scrolls its own box.
+  const { scrollYProgress } = useScroll(standalone ? {} : { container: scrollContainerRef });
   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
+  // Native scroll on mobile standalone — Lenis + custom cursor feel janky on touch
   useEffect(() => {
+    if (standalone || reduceMotion) return;
     if (!scrollContainerRef.current || !scrollContentRef.current) return;
 
     const lenis = new Lenis({
       wrapper: scrollContainerRef.current,
       content: scrollContentRef.current,
-      lerp: 0.03, // Lowered for MAXIMUM smoothness
-      wheelMultiplier: 1, // scroll speed
+      lerp: 0.08,
+      wheelMultiplier: 1,
       smoothWheel: true,
     });
 
+    let rafId = 0;
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
+  }, [standalone, reduceMotion]);
 
-  // #9 Parallax hero portrait
-  const heroParallaxY = useTransform(scrollYProgress, [0, 0.3], [0, -40]);
-
-  const openProjects = () =>
-    dispatch({
-      type: 'OPEN',
-      id: 'projects',
-      title: 'Projects — Explorer',
-      component: 'projects',
-    });
-
-  const openContact = () =>
-    dispatch({
-      type: 'OPEN',
-      id: 'contact',
-      title: 'Contact — New Message',
-      component: 'contact',
-    });
+  // #9 Parallax hero portrait (desktop / embedded only)
+  const heroParallaxY = useTransform(scrollYProgress, [0, 0.3], [0, standalone ? 0 : -40]);
 
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (standalone) {
+      const root = document.querySelector('.mps-root');
+      if (root instanceof HTMLElement) {
+        const top =
+          el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop;
+        root.scrollTo({ top: Math.max(0, top - 8), behavior: 'smooth' });
+        return;
+      }
+    }
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const openProjects = () => {
+    if (onOpenProjects) onOpenProjects();
+    else scrollTo('bv-work');
+  };
+
+  const openContact = () => {
+    if (onOpenContact) onOpenContact();
+    else scrollTo('bv-contact');
   };
 
   const mouseX = useMotionValue(0);
@@ -217,10 +242,11 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
   const dotsMask = useMotionTemplate`radial-gradient(250px circle at ${mouseX}px ${mouseY}px, black 0%, transparent 100%)`;
 
   const handlePointerMove = (e: MouseEvent) => {
+    if (standalone) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const localX = e.clientX - rect.left;
     const localY = e.clientY - rect.top;
-    
+
     mouseX.set(localX);
     mouseY.set(localY + (scrollContainerRef.current?.scrollTop ?? 0));
     cursorX.set(localX);
@@ -229,45 +255,53 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
 
   return (
     <div
-      className="bv-modern-viewport"
+      className={`bv-modern-viewport${standalone ? ' bv-modern-viewport--standalone' : ''}`}
       onPointerMove={handlePointerMove}
-      style={{ position: 'relative', height: '100%', width: '100%', overflow: 'hidden' }}
+      style={
+        standalone
+          ? { position: 'relative', width: '100%' }
+          : { position: 'relative', height: '100%', width: '100%', overflow: 'hidden' }
+      }
+      data-standalone={standalone ? 'true' : undefined}
     >
       <div
         className="bv-modern"
         ref={scrollContainerRef}
-        style={{ height: '100%', overflowY: 'auto' }}
+        style={standalone ? undefined : { height: '100%', overflowY: 'auto' }}
       >
         <div ref={scrollContentRef} className="bv-scroll-content">
       <div className="bv-modern-atmosphere" aria-hidden />
       
-      {/* Red glow that follows the mouse */}
-      <motion.div
-        className="bv-modern-glow"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-          zIndex: 0,
-          background: glowBackground,
-        }}
-      />
-
-      {/* Red dots at grid intersections — only visible near cursor */}
-      <motion.div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-          zIndex: 0,
-          backgroundImage: 'radial-gradient(circle, rgba(239, 68, 68, 0.5) 1.5px, transparent 1.5px)',
-          backgroundSize: '60px 60px',
-          backgroundPosition: '-0.5px -0.5px',
-          maskImage: dotsMask,
-          WebkitMaskImage: dotsMask,
-        }}
-      />
+      {/* Glow + cursor: desktop / embedded only */}
+      {!standalone && (
+        <>
+          <motion.div
+            className="bv-modern-glow"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              zIndex: 0,
+              background: glowBackground,
+            }}
+          />
+          <motion.div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              zIndex: 0,
+              backgroundImage:
+                'radial-gradient(circle, rgba(239, 68, 68, 0.5) 1.5px, transparent 1.5px)',
+              backgroundSize: '60px 60px',
+              backgroundPosition: '-0.5px -0.5px',
+              maskImage: dotsMask,
+              WebkitMaskImage: dotsMask,
+            }}
+          />
+        </>
+      )}
       
       {/* Scroll progress bar */}
       <div className="bv-scroll-progress">
@@ -339,15 +373,16 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
 
           <motion.div
             className="bv-hero-visual"
-            initial={{ opacity: 0, scale: 0.92, rotateY: -12 }}
+            initial={{ opacity: 0, scale: 0.92, rotateY: standalone ? 0 : -12 }}
             animate={{ opacity: 1, scale: 1, rotateY: 0 }}
             transition={{ delay: 0.2, duration: 0.7, ease }}
-            style={{ perspective: 900, y: heroParallaxY }}
+            style={{ perspective: 900, y: standalone ? 0 : heroParallaxY }}
           >
             <PortraitCard
               src={siteData.profileImage}
               name={siteData.name}
-              reduceMotion={!!reduceMotion}
+              reduceMotion={!!reduceMotion || standalone}
+              staticMode={standalone}
             />
           </motion.div>
         </div>
@@ -355,29 +390,33 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
 
       <LaserDivider color="#ef4444" />
 
-      {/* #12 Tech Stack Marquee */}
-      <div className="bv-marquee-section">
-        <div className="bv-marquee-track">
-          {[...CORE_TECH_SKILLS, ...CORE_TECH_SKILLS].map((s, i) => {
-            const iconData = SKILL_ICONS[s];
-            return (
-              <span key={`${s}-${i}`} className="bv-marquee-item">
-                {iconData && (
-                  <img
-                    src={`https://cdn.simpleicons.org/${iconData.slug}/${iconData.color}`}
-                    alt={`${s} icon`}
-                    className="bv-marquee-icon"
-                  />
-                )}
-                <span className="bv-marquee-text">{s}</span>
-                <span className="bv-marquee-sep">·</span>
-              </span>
-            );
-          })}
-        </div>
-      </div>
+      {/* #12 Tech Stack Marquee — skipped on phones: 50+ icon requests for a hidden strip */}
+      {!standalone && (
+        <>
+          <div className="bv-marquee-section">
+            <div className="bv-marquee-track">
+              {[...CORE_TECH_SKILLS, ...CORE_TECH_SKILLS].map((s, i) => {
+                const iconData = SKILL_ICONS[s];
+                return (
+                  <span key={`${s}-${i}`} className="bv-marquee-item">
+                    {iconData && (
+                      <img
+                        src={`https://cdn.simpleicons.org/${iconData.slug}/${iconData.color}`}
+                        alt={`${s} icon`}
+                        className="bv-marquee-icon"
+                      />
+                    )}
+                    <span className="bv-marquee-text">{s}</span>
+                    <span className="bv-marquee-sep">·</span>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
 
-      <LaserDivider color="#ef4444" />
+          <LaserDivider color="#ef4444" />
+        </>
+      )}
 
       <ProjectShowcase projects={featured} openProjects={openProjects} />
 
@@ -402,7 +441,7 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
             </motion.h3>
             
             <motion.p className="bv-story-text" variants={fadeUp} custom={2}>
-              My mission is to transform complex problems into elegant, highly scalable solutions. Whether it's architecting <span className="bv-text-highlight">government platforms</span>, scaling <span className="bv-text-highlight">startup ventures</span>, or deploying <span className="bv-text-highlight">enterprise-grade AI</span>, I blend cutting-edge technology with visionary innovation to build systems that truly matter.
+              My mission is to transform complex problems into elegant, highly scalable solutions. Whether it&apos;s architecting <span className="bv-text-highlight">government platforms</span>, scaling <span className="bv-text-highlight">startup ventures</span>, or deploying <span className="bv-text-highlight">enterprise-grade AI</span>, I blend cutting-edge technology with visionary innovation to build systems that truly matter.
             </motion.p>
           </div>
           
@@ -424,26 +463,12 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
         <motion.h2 variants={fadeUp} custom={0}>
           Stacks
         </motion.h2>
-        <motion.div variants={fadeUp} custom={1} className="bv-stacks-container">
-          {CORE_TECH_SKILLS.map((s, i) => {
-            const icon = SKILL_ICONS[s];
-            return (
-              <motion.div
-                key={s}
-                className="bv-stack-badge"
-                whileHover={reduceMotion ? undefined : { y: -2, scale: 1.02 }}
-                transition={{ delay: 0.02 * i, duration: 0.2, ease }}
-              >
-                <img
-                  src={`https://cdn.simpleicons.org/${icon.slug}/${icon.color}`}
-                  alt={`${s} icon`}
-                  className="bv-stack-icon"
-                />
-                {s}
-              </motion.div>
-            );
-          })}
-        </motion.div>
+        <StacksBlock
+          skills={CORE_TECH_SKILLS}
+          icons={SKILL_ICONS}
+          reduceMotion={!!reduceMotion}
+          collapsible={standalone}
+        />
 
         <motion.div variants={fadeUp} custom={2} className="bv-github-header">
           <h2>GitHub Contributions</h2>
@@ -451,7 +476,7 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
         </motion.div>
         
         <motion.div variants={fadeUp} custom={3}>
-          <InteractiveGitHubGrid />
+          <InteractiveGitHubGrid compact={standalone} />
         </motion.div>
       </motion.section>
 
@@ -514,7 +539,7 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
           
           <div className="premium-contact-content">
             <h2 className="premium-contact-title">
-              Let's build something <br/> <span className="text-glow">intelligent</span> together.
+              Let&apos;s build something <br/> <span className="text-glow">intelligent</span> together.
             </h2>
             
             <p className="premium-contact-subtitle">
@@ -550,6 +575,14 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
                   <span className="social-label">{getEmailAddress()}</span>
                 </div>
               </a>
+              {getWhatsAppHref() && (
+                <a href={getWhatsAppHref('Hello Farhan') || ''} target="_blank" rel="noopener noreferrer" className="social-card">
+                  <div className="social-card-inner">
+                    <WhatsappIcon size={20} className="social-icon-svg" />
+                    <span className="social-label">WhatsApp</span>
+                  </div>
+                </a>
+              )}
             </div>
           </div>
         </motion.div>
@@ -564,34 +597,40 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
             <span>{new Date().getFullYear()}</span>
           </div>
           <div className="footer-right">
-            <button type="button" className="terminal-replay-btn" onClick={onReplayEras}>
-              <span className="prompt">{'>'}</span> <span className="command">execute replay_history()</span>
-              <span className="cursor blink">_</span>
-            </button>
+            {onReplayEras ? (
+              <button type="button" className="terminal-replay-btn" onClick={onReplayEras}>
+                <span className="prompt">{'>'}</span> <span className="command">execute replay_history()</span>
+                <span className="cursor blink">_</span>
+              </button>
+            ) : (
+              <span className="footer-standalone-hint">farhanbuilds.in</span>
+            )}
           </div>
         </div>
       </footer>
       </div> {/* End bv-scroll-content */}
       </div> {/* End scrollable container */}
 
-      <FloatingDock />
+      {/* Phones use the shell's fixed bottom nav instead — one bottom chrome only */}
+      {!standalone && <FloatingDock />}
 
-      {/* Custom Rotating Crosshair Cursor */}
-      <motion.div
-        className="bv-custom-cursor"
-        style={{
-          left: cursorX,
-          top: cursorY,
-        }}
-      >
-        <div className="bv-cursor-dot" />
-        <div className="bv-cursor-brackets">
-          <span className="bv-cbr bv-cbr-tl" />
-          <span className="bv-cbr bv-cbr-tr" />
-          <span className="bv-cbr bv-cbr-bl" />
-          <span className="bv-cbr bv-cbr-br" />
-        </div>
-      </motion.div>
+      {!standalone && (
+        <motion.div
+          className="bv-custom-cursor"
+          style={{
+            left: cursorX,
+            top: cursorY,
+          }}
+        >
+          <div className="bv-cursor-dot" />
+          <div className="bv-cursor-brackets">
+            <span className="bv-cbr bv-cbr-tl" />
+            <span className="bv-cbr bv-cbr-tr" />
+            <span className="bv-cbr bv-cbr-bl" />
+            <span className="bv-cbr bv-cbr-br" />
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }
@@ -600,9 +639,67 @@ export function ModernSite({ onReplayEras }: ModernSiteProps) {
 const STATS_DATA = [
   { value: 32, suffix: '+', label: 'Products Built' },
   { value: 12, suffix: '+', label: 'Major Awards' },
-  { value: 4, suffix: '+', label: 'Startups Scaled' },
+  { value: 6, suffix: '+', label: 'Startups Scaled' },
   { value: 4, suffix: '+', label: 'Years Building' },
 ];
+
+const MOBILE_STACK_PREVIEW = 8;
+
+function StacksBlock({
+  skills,
+  icons,
+  reduceMotion,
+  collapsible,
+}: {
+  skills: string[];
+  icons: Record<string, { slug: string; color: string }>;
+  reduceMotion: boolean;
+  collapsible: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const visible = collapsible && !open ? skills.slice(0, MOBILE_STACK_PREVIEW) : skills;
+  const hiddenCount = Math.max(0, skills.length - MOBILE_STACK_PREVIEW);
+
+  return (
+    <motion.div variants={fadeUp} custom={1} className="bv-stacks-wrap">
+      <div className={`bv-stacks-container${collapsible ? ' bv-stacks-container--mobile' : ''}`}>
+        {visible.map((s, i) => {
+          const icon = icons[s];
+          if (!icon) return null;
+          return (
+            <motion.div
+              key={s}
+              className="bv-stack-badge"
+              whileHover={reduceMotion || collapsible ? undefined : { y: -2, scale: 1.02 }}
+              transition={{ delay: 0.02 * i, duration: 0.2, ease }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://cdn.simpleicons.org/${icon.slug}/${icon.color}`}
+                alt=""
+                className="bv-stack-icon"
+              />
+              {s}
+            </motion.div>
+          );
+        })}
+      </div>
+      {collapsible && hiddenCount > 0 && (
+        <button
+          type="button"
+          className="bv-stacks-toggle"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+        >
+          {open ? 'Show less' : `Show ${hiddenCount} more stacks`}
+          <span className={`bv-stacks-chevron${open ? ' is-open' : ''}`} aria-hidden>
+            ▾
+          </span>
+        </button>
+      )}
+    </motion.div>
+  );
+}
 
 function StatsBar() {
   const ref = useRef<HTMLDivElement>(null);
@@ -634,7 +731,6 @@ function AnimatedNumber({ target, active }: { target: number; active: boolean })
   const [value, setValue] = useState(0);
   useEffect(() => {
     if (!active) return;
-    let start = 0;
     const duration = 1200;
     const startTime = performance.now();
     const tick = (now: number) => {
@@ -652,10 +748,12 @@ function PortraitCard({
   src,
   name,
   reduceMotion,
+  staticMode = false,
 }: {
   src: string;
   name: string;
   reduceMotion: boolean;
+  staticMode?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [imgOk, setImgOk] = useState(true);
@@ -674,7 +772,7 @@ function PortraitCard({
   const glare = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.35), transparent 55%)`;
 
   const onMove = (e: MouseEvent) => {
-    if (reduceMotion || !ref.current) return;
+    if (staticMode || reduceMotion || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
@@ -698,8 +796,8 @@ function PortraitCard({
         ref={ref}
         className="bv-portrait-card"
         style={{
-          rotateX: springX,
-          rotateY: springY,
+          rotateX: staticMode ? 0 : springX,
+          rotateY: staticMode ? 0 : springY,
           transformStyle: 'preserve-3d',
         }}
         onMouseMove={onMove}
@@ -721,11 +819,17 @@ function PortraitCard({
               <small>Add public/images/farhan.jpeg</small>
             </div>
           )}
-          <motion.div className="bv-portrait-glare" style={{ background: glare }} aria-hidden />
+          {!staticMode && (
+            <motion.div className="bv-portrait-glare" style={{ background: glare }} aria-hidden />
+          )}
         </div>
-        <div className="bv-portrait-caption" style={{ transform: 'translateZ(28px)' }}>
+        {/* Caption moved OUTSIDE the clipped frame so it's not cut by overflow:hidden + border-radius:50% */}
+        <div
+          className="bv-portrait-caption"
+          style={staticMode ? undefined : { transform: 'translateZ(28px)' }}
+        >
           <strong>{name}</strong>
-          <span style={{ color: 'var(--bv-accent)', fontWeight: 700, letterSpacing: '0.05em', fontSize: '0.9em', textTransform: 'uppercase' }}>SIH 2025 National Winner</span>
+          <span>SIH 2025 National Winner</span>
         </div>
       </motion.div>
     </div>

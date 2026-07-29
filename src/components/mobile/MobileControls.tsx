@@ -1,45 +1,50 @@
+'use client';
+
 import React from 'react';
 import { gameBridge } from '@/lib/GameBridge';
-import { ArrowLeft, ArrowRight, ArrowUp, Circle } from 'lucide-react';
 
-/** Compact on-screen pad for the Nokia viewport (~220px tall). */
-export function MobileControls() {
-  const handleTouch = (key: string, state: 'down' | 'up') => (e: React.TouchEvent | React.MouseEvent) => {
+function bindKey(key: string) {
+  const send = (state: 'down' | 'up') => (e: React.SyntheticEvent) => {
     e.preventDefault();
     e.stopPropagation();
     gameBridge.emit('mobile-input', { key, state });
   };
+  return {
+    onTouchStart: send('down'),
+    onTouchEnd: send('up'),
+    onTouchCancel: send('up'),
+    onMouseDown: send('down'),
+    onMouseUp: send('up'),
+    onMouseLeave: send('up'),
+    onContextMenu: (e: React.SyntheticEvent) => e.preventDefault(),
+  };
+}
 
-  const bind = (key: string) => ({
-    onTouchStart: handleTouch(key, 'down'),
-    onTouchEnd: handleTouch(key, 'up'),
-    onTouchCancel: handleTouch(key, 'up'),
-    onMouseDown: handleTouch(key, 'down'),
-    onMouseUp: handleTouch(key, 'up'),
-    onMouseLeave: handleTouch(key, 'up'),
-  });
-
-  const btn =
-    'w-9 h-9 bg-black/50 active:bg-white/30 border border-white/40 rounded flex items-center justify-center touch-none';
-
+/** LCD-adjacent game pad — matches Nokia green firmware, no Lucide/modern chrome. */
+export function MobileControls() {
   return (
-    <div className="absolute inset-x-0 bottom-0 h-12 flex items-center justify-between px-1.5 pb-1 pointer-events-none z-40 select-none">
-      <div className="flex gap-1 pointer-events-auto">
-        <button type="button" className={btn} aria-label="Move left" {...bind('left')}>
-          <ArrowLeft className="text-white opacity-90 w-4 h-4" />
+    <div className="nokia-game-pad" aria-label="Game controls">
+      <div className="nokia-game-pad__group">
+        <button type="button" className="nokia-game-btn" aria-label="Move left" {...bindKey('left')}>
+          ◄
         </button>
-        <button type="button" className={btn} aria-label="Move right" {...bind('right')}>
-          <ArrowRight className="text-white opacity-90 w-4 h-4" />
+        <button type="button" className="nokia-game-btn" aria-label="Move right" {...bindKey('right')}>
+          ►
         </button>
       </div>
-      <div className="flex gap-1 pointer-events-auto">
-        <button type="button" className={`${btn} rounded-full`} aria-label="Run" {...bind('shift')}>
-          <Circle className="text-white opacity-90 w-3.5 h-3.5" />
+      <div className="nokia-game-pad__group">
+        <button type="button" className="nokia-game-btn nokia-game-btn--run" aria-label="Run" {...bindKey('shift')}>
+          RUN
         </button>
-        <button type="button" className={`${btn} rounded-full`} aria-label="Jump" {...bind('up')}>
-          <ArrowUp className="text-white opacity-90 w-4 h-4" />
+        <button type="button" className="nokia-game-btn nokia-game-btn--jump" aria-label="Jump" {...bindKey('up')}>
+          JMP
         </button>
       </div>
     </div>
   );
+}
+
+/** Emit holdable input from the physical Nokia D-pad while playing. */
+export function emitGamePad(key: string, state: 'down' | 'up') {
+  gameBridge.emit('mobile-input', { key, state });
 }

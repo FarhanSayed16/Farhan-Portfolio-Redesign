@@ -291,7 +291,7 @@ function DesktopIconButton({
   isSelected: boolean;
   onSelect: () => void;
   onOpen: () => void;
-  dragConstraints: React.RefObject<Element>;
+  dragConstraints: React.RefObject<Element | null>;
   styleOverride?: React.CSSProperties;
 }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -337,9 +337,8 @@ function DesktopIconButton({
         touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none',
-        WebkitUserDrag: 'none',
         ...styleOverride,
-      }}
+      } as React.CSSProperties}
     >
       <div style={{ pointerEvents: 'none' }}>
         <Icon size={48} />

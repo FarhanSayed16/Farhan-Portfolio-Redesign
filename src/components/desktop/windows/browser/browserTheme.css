@@ -720,7 +720,7 @@
   object-fit: cover;
   object-position: 35% 20%;
   display: block;
-  transform: scale(1.14) translate(4%, 3.5%);
+  transform: scale(1.10) translate(3%, 2.5%);
 }
 
 .bv-portrait-fallback {
@@ -760,7 +760,7 @@
 
 .bv-portrait-caption {
   position: absolute;
-  bottom: 0;
+  bottom: -8px;
   left: 50%;
   transform: translateX(-50%) translateZ(28px);
   display: flex;
@@ -768,11 +768,12 @@
   align-items: center;
   gap: 4px;
   padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 99px;
   backdrop-filter: blur(12px);
   white-space: nowrap;
+  z-index: 5;
 }
 
 .bv-portrait-caption strong {
@@ -1963,14 +1964,12 @@
 
 .premium-viewport {
   position: relative;
-  height: 420px;
+  min-height: 420px;
   width: 100%;
   overflow: visible;
 }
 
 .premium-card {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   background: var(--bv-surface);
@@ -2407,7 +2406,7 @@
   background-image: var(--bg-img);
   background-size: var(--bg-fit, contain);
   background-repeat: no-repeat;
-  background-position: center top;
+  background-position: center center;
   z-index: 2;
 }
 
@@ -2716,6 +2715,18 @@
   }
   .hof-size-large {
     grid-row: span 2;
+  }
+  .hof-bento-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.5) 35%,
+      rgba(0, 0, 0, 0.9) 75%,
+      rgba(0, 0, 0, 0.98) 100%
+    );
+  }
+  .hof-bento-title {
+    font-size: 22px;
   }
   .hof-cert-grid {
     grid-template-columns: 1fr;

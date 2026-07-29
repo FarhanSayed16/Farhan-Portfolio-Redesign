@@ -15,7 +15,19 @@ interface ApiResponse {
   error?: string;
 }
 
-export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { username?: string }) {
+/** Seeded 0..1 — keeps the offline grid identical on server and client (and render pure). */
+function seeded(n: number) {
+  const x = Math.sin(n * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+export default function InteractiveGitHubGrid({
+  username = 'FarhanSayed16',
+  compact = false,
+}: {
+  username?: string;
+  compact?: boolean;
+}) {
   const [hoveredDay, setHoveredDay] = useState<ContributionDay | null>(null);
   const [hoveredLevel, setHoveredLevel] = useState<number | null>(null);
   const [data, setData] = useState<{ total: number; weeks: ContributionDay[][] } | null>(null);
@@ -37,17 +49,18 @@ export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { 
       let level = 0;
       let count = 0;
       const wave = Math.sin(i / 14) + Math.cos(i / 7);
-      const rand = Math.random();
+      const rand = seeded(i);
+      const spread = seeded(i + 0.37);
 
       if (rand > 0.15) {
         if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-          if (wave > 0.8 || rand > 0.85) { level = 4; count = Math.floor(Math.random() * 8) + 12; }
-          else if (wave > 0.3 || rand > 0.6) { level = 3; count = Math.floor(Math.random() * 6) + 6; }
-          else if (rand > 0.35) { level = 2; count = Math.floor(Math.random() * 4) + 3; }
-          else { level = 1; count = Math.floor(Math.random() * 2) + 1; }
+          if (wave > 0.8 || rand > 0.85) { level = 4; count = Math.floor(spread * 8) + 12; }
+          else if (wave > 0.3 || rand > 0.6) { level = 3; count = Math.floor(spread * 6) + 6; }
+          else if (rand > 0.35) { level = 2; count = Math.floor(spread * 4) + 3; }
+          else { level = 1; count = Math.floor(spread * 2) + 1; }
         } else {
-          if (rand > 0.7) { level = 3; count = Math.floor(Math.random() * 5) + 6; }
-          else if (rand > 0.4) { level = 2; count = Math.floor(Math.random() * 3) + 2; }
+          if (rand > 0.7) { level = 3; count = Math.floor(spread * 5) + 6; }
+          else if (rand > 0.4) { level = 2; count = Math.floor(spread * 3) + 2; }
           else if (rand > 0.2) { level = 1; count = 1; }
         }
       }
@@ -64,7 +77,6 @@ export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { 
   // Fetch real live contributions directly from our server API route
   useEffect(() => {
     let isMounted = true;
-    setLoading(true);
 
     fetch(`/api/github-contributions?username=${encodeURIComponent(username)}`)
       .then((res) => {
@@ -93,7 +105,8 @@ export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { 
     };
   }, [username, fallbackData]);
 
-  const activeWeeks = data ? data.weeks : fallbackData.weeks;
+  const activeWeeksFull = data ? data.weeks : fallbackData.weeks;
+  const activeWeeks = compact ? activeWeeksFull.slice(-26) : activeWeeksFull;
   const activeTotal = data ? data.total : fallbackData.total;
 
   const getLevelColor = (level: number) => {
@@ -112,12 +125,14 @@ export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { 
   };
 
   return (
-    <div className="bv-hud-grid-wrapper">
+    <div className={`bv-hud-grid-wrapper${compact ? ' bv-hud-grid-wrapper--compact' : ''}`}>
       <div className="bv-hud-container">
         {/* Top HUD Header Bar */}
         <div className="bv-hud-header">
           <div className="bv-hud-header-left">
-            <span className="bv-hud-title">GITHUB.FREQ_ANALYSIS</span>
+            <span className="bv-hud-title">
+              {compact ? 'GITHUB · RECENT' : 'GITHUB.FREQ_ANALYSIS'}
+            </span>
           </div>
           <div className="bv-hud-header-right">
             <span className="bv-hud-sync-indicator" style={{ backgroundColor: loading ? '#facc15' : '#39d353' }} />
@@ -131,7 +146,7 @@ export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { 
         {/* Interactive Grid Stage with Tooltip Overlay */}
         <div className="bv-hud-stage">
           <AnimatePresence>
-            {hoveredDay && (
+            {hoveredDay && !compact && (
               <motion.div
                 initial={{ opacity: 0, y: 6, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -157,25 +172,33 @@ export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { 
                     const isDimmed = hoveredLevel !== null && day.level !== hoveredLevel;
                     const isHighlighted = hoveredLevel !== null && day.level === hoveredLevel && day.level > 0;
 
-                    return (
+                    const cell = {
+                      type: 'button' as const,
+                      className: `bv-hud-cell ${isHighlighted ? 'bv-hud-cell-highlighted' : ''}`,
+                      style: {
+                        backgroundColor: getLevelColor(day.level),
+                        opacity: loading ? 0.4 : isDimmed ? 0.2 : 1,
+                      },
+                      onClick: () =>
+                        window.open(
+                          `https://github.com/${username}?tab=overview&from=${day.date}`,
+                          '_blank'
+                        ),
+                      'aria-label': `${day.count} contributions on ${day.date}`,
+                    };
+
+                    // Compact (phone): plain buttons — 180 framer instances for a
+                    // non-hoverable strip is pure scroll cost.
+                    return compact ? (
+                      <button key={day.date} {...cell} />
+                    ) : (
                       <motion.button
                         key={day.date}
-                        type="button"
-                        className={`bv-hud-cell ${isHighlighted ? 'bv-hud-cell-highlighted' : ''}`}
-                        style={{
-                          backgroundColor: getLevelColor(day.level),
-                          opacity: loading ? 0.4 : isDimmed ? 0.2 : 1,
-                        }}
+                        {...cell}
                         onMouseEnter={() => setHoveredDay(day)}
                         onMouseLeave={() => setHoveredDay(null)}
-                        onClick={() => window.open(`https://github.com/${username}?tab=overview&from=${day.date}`, '_blank')}
-                        whileHover={{
-                          scale: 1.4,
-                          zIndex: 20,
-                          transition: { duration: 0.08 },
-                        }}
+                        whileHover={{ scale: 1.4, zIndex: 20, transition: { duration: 0.08 } }}
                         whileTap={{ scale: 0.9 }}
-                        aria-label={`${day.count} contributions on ${day.date}`}
                       />
                     );
                   })}
@@ -199,9 +222,9 @@ export default function InteractiveGitHubGrid({ username = 'FarhanSayed16' }: { 
                 type="button"
                 className="bv-hud-legend-box"
                 style={{ backgroundColor: getLevelColor(lvl) }}
-                onMouseEnter={() => setHoveredLevel(lvl)}
+                onMouseEnter={() => !compact && setHoveredLevel(lvl)}
                 onMouseLeave={() => setHoveredLevel(null)}
-                title={lvl === 0 ? 'No activity' : `Level ${lvl} activity (hover to highlight)`}
+                title={lvl === 0 ? 'No activity' : `Level ${lvl} activity`}
               />
             ))}
             <span className="bv-hud-legend-label">MORE</span>
