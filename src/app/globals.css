@@ -102,6 +102,26 @@
     -moz-osx-font-smoothing: auto;
   }
 
+  /* Soft anti-scrape on chrome: wallpaper/icons — NOT form fields / window text */
+  [data-theme='xp'] img,
+  [data-theme='xp'] canvas {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  [data-theme='xp'] [data-desktop-chrome] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  [data-theme='xp'] [data-window] input,
+  [data-theme='xp'] [data-window] textarea,
+  [data-theme='xp'] [data-window] [contenteditable='true'],
+  [data-theme='xp'] [data-selectable] {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
   [data-theme='xp'] {
     font-family: var(--font-os), system-ui, sans-serif;
   }

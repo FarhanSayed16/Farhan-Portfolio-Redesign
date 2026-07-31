@@ -60,6 +60,8 @@ export default function ContextMenu({ x, y }: { x: number; y: number }) {
     (action: string) => {
       switch (action) {
         case 'refresh':
+          // Desktop listens — blinks icons off then back on.
+          window.dispatchEvent(new Event('farhan-desktop-refresh'));
           break;
         case 'about':
           dispatch({ type: 'OPEN', id: 'about', title: 'About Me.txt — Notepad', component: 'about' });

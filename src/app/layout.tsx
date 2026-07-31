@@ -1,26 +1,25 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk, JetBrains_Mono, Press_Start_2P, Outfit, Syne } from 'next/font/google';
+import { Space_Grotesk, JetBrains_Mono, Press_Start_2P, Outfit, Syne } from 'next/font/google';
 import './globals.css';
+import SecurityClient from '@/components/shared/SecurityClient';
 
 // Import site data for metadata (static import works in Server Components)
 import siteJson from '../../data/content/site.json';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
+// preload: false — first paint is XP/Tahoma; these fonts load when their CSS is used
+// (Browser / ConnectQR / mobile / game). Avoids “preloaded but not used” console spam.
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
+  preload: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
+  preload: false,
 });
 
 const pressStart2P = Press_Start_2P({
@@ -28,18 +27,21 @@ const pressStart2P = Press_Start_2P({
   subsets: ['latin'],
   variable: '--font-pixel',
   display: 'swap',
+  preload: false,
 });
 
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
   display: 'swap',
+  preload: false,
 });
 
 const syne = Syne({
   subsets: ['latin'],
   variable: '--font-syne',
   display: 'swap',
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -90,10 +92,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${pressStart2P.variable} ${outfit.variable} ${syne.variable}`}
+      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${pressStart2P.variable} ${outfit.variable} ${syne.variable}`}
     >
       <body>
         {children}
+        <SecurityClient />
         <noscript>
           <div className="md:hidden flex flex-col items-center justify-center min-h-screen bg-[#008080] text-white p-6 text-center">
             <h1 className="text-2xl font-bold mb-4 font-os">Farhan OS</h1>
