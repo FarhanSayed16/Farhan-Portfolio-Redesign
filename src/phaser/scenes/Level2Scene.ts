@@ -6,6 +6,8 @@ import { Mushroom, FireFlower } from '../sprites/Item';
 import { Fireball } from '../sprites/Fireball';
 import { Coin } from '../sprites/Coin';
 import { spawnEnemyFromObject, wireCombat, handleQBlockHit } from '../gameplay/levelCombat';
+import { breakBrick, bumpBrick } from '../gameplay/brickBreak';
+import { placePipe } from '../gameplay/placePipe';
 
 export default class Level2Scene extends BaseLevel {
   player!: Player;
@@ -35,7 +37,7 @@ export default class Level2Scene extends BaseLevel {
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.addScenery(map.widthInPixels);
+    this.addScenery(map, this.groundLayer);
 
     this.enemies = this.physics.add.group();
     this.items = this.physics.add.group();
@@ -60,14 +62,7 @@ export default class Level2Scene extends BaseLevel {
       if (obj.type === 'Enemy' || obj.type === 'Koopa') {
         spawnEnemyFromObject(this, this.enemies, obj);
       } else if (obj.type === 'WarpPipe') {
-        const pipe = this.add.image(x + 32, y + 32, 'pipe').setDepth(4);
-        this.physics.add.existing(pipe, true);
-        const body = pipe.body as Phaser.Physics.Arcade.StaticBody;
-        body.setSize(48, 56);
-        body.setOffset(8, 8);
-        this.physics.add.overlap(this.player, pipe, () => {
-          this.completeLevel('Level3Scene');
-        });
+        placePipe(this, x, y, { warpTo: 'Level3Scene' });
       }
     });
 
@@ -106,10 +101,9 @@ export default class Level2Scene extends BaseLevel {
     const tile = t as Phaser.Tilemaps.Tile;
     if (!tile || !player.body) return;
     if (handleQBlockHit(this, player, tile)) return;
-    if (tile.index === 2 && player.body.blocked.up && this.player.isSuper) {
-      this.groundLayer.removeTileAt(tile.x, tile.y);
-      this.addScore(50);
-      this.sfx.playStomp();
+    if (tile.index === 2 && player.body.blocked.up) {
+      if (this.player.isSuper || this.player.isFire) breakBrick(this, tile);
+      else bumpBrick(this, tile);
     }
   };
 }

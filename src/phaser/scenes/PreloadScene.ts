@@ -48,13 +48,13 @@ export default class PreloadScene extends Phaser.Scene {
       this.load.image(key, `/game/sprites/${key}.png`);
     }
 
-    this.load.audio('smb_jump', '/sounds/smb_jump.mp3');
-    this.load.audio('smb_coin', '/sounds/smb_coin.mp3');
-    this.load.audio('smb_mariodie', '/sounds/smb_mariodie.mp3');
-    this.load.audio('smb_stomp', '/sounds/smb_stomp.mp3');
-    this.load.audio('smb_1up', '/sounds/smb_1up.mp3');
-    this.load.audio('smb_powerup', '/sounds/smb_powerup.mp3');
-    this.load.audio('smb_stage_clear', '/sounds/smb_stage_clear.mp3');
+    this.load.audio('smb_jump', '/sounds/smb_jump.wav');
+    this.load.audio('smb_coin', '/sounds/smb_coin.wav');
+    this.load.audio('smb_mariodie', '/sounds/smb_mariodie.wav');
+    this.load.audio('smb_stomp', '/sounds/smb_stomp.wav');
+    this.load.audio('smb_1up', '/sounds/smb_1up.wav');
+    this.load.audio('smb_powerup', '/sounds/smb_powerup.wav');
+    this.load.audio('smb_stage_clear', '/sounds/smb_stage_clear.wav');
     this.load.audio('bgm_overworld', '/game/audio/overworld.wav');
     this.load.audio('bgm_castle', '/game/audio/castle.wav');
   }

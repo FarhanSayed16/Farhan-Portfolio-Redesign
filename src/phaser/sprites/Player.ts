@@ -85,11 +85,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   private applySmallBody(keepFeet = false) {
+    // 2× NES small: texture 32×32, origin bottom-center
     this.setBodyHeight(20, 28, 6, 4, keepFeet);
   }
 
   private applyBigBody() {
-    this.setBodyHeight(22, 44, 5, 4, true);
+    // 2× NES big: texture 32×64
+    this.setBodyHeight(22, 56, 5, 8, true);
   }
 
   update() {
@@ -125,9 +127,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     );
 
     if (jumpHeld && body.onFloor()) {
-      body.setVelocityY(this.isSuper ? -520 : -480);
+      // 520/980 gravity gives ~1.06s of air, so a walking jump reaches ~186px —
+      // comfortably over the 128px pits rather than being frame-perfect.
+      body.setVelocityY(this.isSuper ? -560 : -520);
       this.jumpCutApplied = false;
-      (this.scene as SceneWithSfx).sfx?.playJump();
+      (this.scene as SceneWithSfx).sfx?.playJump(this.isSuper || this.isFire);
     } else if (!jumpHeld && body.velocity.y < 0 && !this.jumpCutApplied) {
       body.setVelocityY(body.velocity.y * 0.5);
       this.jumpCutApplied = true;
@@ -160,7 +164,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const dir = this.flipX ? -1 : 1;
     const ball = new Fireball(this.scene, this.x + dir * 16, this.y - 28, dir);
     scene.fireballs?.add(ball);
-    scene.sfx?.playBlock();
+    scene.sfx?.playFireball();
   }
 
   private updateAnimation(body: Phaser.Physics.Arcade.Body, moving: boolean) {

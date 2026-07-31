@@ -8,6 +8,7 @@ import { Coin } from '../sprites/Coin';
 import { Bowser } from '../sprites/Bowser';
 import { Axe } from '../sprites/Axe';
 import { spawnEnemyFromObject, wireCombat, handleQBlockHit } from '../gameplay/levelCombat';
+import { breakBrick, bumpBrick } from '../gameplay/brickBreak';
 
 export default class Level3Scene extends BaseLevel {
   player!: Player;
@@ -153,10 +154,9 @@ export default class Level3Scene extends BaseLevel {
     const tile = t as Phaser.Tilemaps.Tile;
     if (!tile || !player.body) return;
     if (handleQBlockHit(this, player, tile)) return;
-    if (tile.index === 2 && player.body.blocked.up && this.player.isSuper) {
-      this.groundLayer.removeTileAt(tile.x, tile.y);
-      this.addScore(50);
-      this.sfx.playStomp();
+    if (tile.index === 2 && player.body.blocked.up) {
+      if (this.player.isSuper || this.player.isFire) breakBrick(this, tile);
+      else bumpBrick(this, tile);
     }
   };
 }

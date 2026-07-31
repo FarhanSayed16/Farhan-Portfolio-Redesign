@@ -27,12 +27,22 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     this.add
-      .text(width / 2, height / 2 - 70, "SUPER MARIO BROS.", {
+      .text(width / 2, height / 2 - 78, "FARHAN'S STORY", {
         fontFamily: '"Press Start 2P", monospace',
         fontSize: '22px',
         color: '#ffffff',
         stroke: '#000000',
         strokeThickness: 4,
+      })
+      .setOrigin(0.5);
+
+    this.add
+      .text(width / 2, height / 2 - 42, 'A PORTFOLIO ADVENTURE', {
+        fontFamily: '"Press Start 2P", monospace',
+        fontSize: '9px',
+        color: '#f8d878',
+        stroke: '#000000',
+        strokeThickness: 3,
       })
       .setOrigin(0.5);
 
