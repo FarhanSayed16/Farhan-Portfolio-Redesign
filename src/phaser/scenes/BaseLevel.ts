@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SFXSynth } from '@/lib/SFXSynth';
+import { getGameSFX, type SFXSynth } from '@/lib/SFXSynth';
 import { getGameBGM } from '@/lib/GameBGM';
 import { portfolioData } from '@/lib/portfolioData';
 import { gameBridge } from '@/lib/GameBridge';
@@ -9,8 +9,6 @@ export type LevelProgress = {
   coins?: number;
   lives?: number;
 };
-
-const sharedSfx = typeof window !== 'undefined' ? new SFXSynth() : null;
 
 export default class BaseLevel extends Phaser.Scene {
   protected score = 0;
@@ -35,7 +33,9 @@ export default class BaseLevel extends Phaser.Scene {
 
   constructor(key: string) {
     super({ key });
-    this.sfx = sharedSfx ?? new SFXSynth();
+    const sfx = getGameSFX();
+    if (!sfx) throw new Error('Game SFX unavailable');
+    this.sfx = sfx;
   }
 
   init(data: LevelProgress = {}) {
@@ -68,24 +68,61 @@ export default class BaseLevel extends Phaser.Scene {
   }
 
   /** Place hills / bushes / clouds for that SMB overworld feel. */
-  protected addScenery(mapWidth: number) {
-    const groundY = this.cameras.main.height - 64;
-    for (let x = 20; x < mapWidth; x += 220) {
-      this.add.image(x, groundY - 16, 'hill').setOrigin(0.5, 1).setDepth(0).setScrollFactor(0.35);
+  protected addScenery(map: Phaser.Tilemaps.Tilemap, ground?: Phaser.Tilemaps.TilemapLayer) {
+    const mapWidth = map.widthInPixels;
+    const fallbackY = this.cameras.main.height - 64;
+
+    /**
+     * Surface of the *ground*, found by walking up from the bottom row while tiles are
+     * solid. Scanning downward instead lands on floating brick platforms, which is how
+     * hills ended up perched in mid-air. Null means this column is a pit.
+     */
+    const groundTop = (x: number): number | null => {
+      if (!ground) return fallbackY;
+      const col = ground.worldToTileX(x);
+      let top: number | null = null;
+      for (let row = map.height - 1; row >= 0; row--) {
+        const tile = ground.getTileAt(col, row);
+        if (!tile || tile.index <= 0) break;
+        top = tile.pixelY;
+      }
+      return top;
+    };
+
+    // Keep decoration off pipes and the finish line, where it just collides with the art.
+    const keepClear = (map.getObjectLayer('Objects')?.objects ?? []).flatMap((o) => {
+      const x = o.x ?? 0;
+      if (o.type === 'Pipe' || o.type === 'WarpPipe') return [[x - 80, x + (o.width ?? 64) + 80]];
+      if (o.type === 'Flagpole') return [[x - 80, x + 320]];
+      return [];
+    });
+    const blocked = (x: number) => keepClear.some(([a, b]) => x >= a && x <= b);
+
+    // SMB has no parallax: everything scrolls 1:1 with the world. Mixed scroll factors
+    // were what made hills slide across bushes and read as duplicated scenery.
+    // Negative depths keep scenery behind the tilemap layer (depth 0).
+    const hills: number[] = [];
+    for (let x = 160; x < mapWidth; x += 420) {
+      const y = groundTop(x);
+      if (y === null || blocked(x)) continue;
+      hills.push(x);
+      this.add.image(x, y, 'hill').setOrigin(0.5, 1).setDepth(-3);
     }
-    for (let x = 90; x < mapWidth; x += 160) {
-      this.add.image(x, groundY - 2, 'bush').setOrigin(0.5, 1).setDepth(1).setScrollFactor(0.8);
+
+    for (let x = 96; x < mapWidth; x += 190) {
+      const y = groundTop(x);
+      if (y === null || blocked(x)) continue; // a pit would leave the bush hanging
+      if (hills.some((hx) => Math.abs(hx - x) < 120)) continue;
+      this.add.image(x, y, 'bush').setOrigin(0.5, 1).setDepth(-2);
     }
-    for (let x = 40; x < mapWidth; x += 180) {
-      this.add
-        .image(x, 55 + ((x / 60) % 3) * 18, 'cloud')
-        .setDepth(0)
-        .setScrollFactor(0.2)
-        .setAlpha(0.98);
+
+    for (let x = 40; x < mapWidth; x += 220) {
+      this.add.image(x, 56 + ((x / 220) % 3) * 22, 'cloud').setOrigin(0.5, 1).setDepth(-4);
     }
   }
 
   protected startBgm(mood: 'overworld' | 'castle' = 'overworld') {
+    this.sfx.stopExclusive();
     getGameBGM()?.start(mood);
   }
 
@@ -100,6 +137,8 @@ export default class BaseLevel extends Phaser.Scene {
       fontSize: '10px',
       color: '#ffffff',
       align: 'center',
+      stroke: '#000000',
+      strokeThickness: 3,
     };
 
     const col = (cx: number, title: string, value: string) => {
@@ -205,20 +244,19 @@ export default class BaseLevel extends Phaser.Scene {
 
     if (this.coins > 0 && this.coins % 10 === 0) {
       const idx = (this.coins / 10 - 1) % portfolioData.coinFacts.length;
-      this.events.emit('post-overlay-resume');
-      this.scene.pause();
       gameBridge.emit('show-overlay', { type: 'coin', text: portfolioData.coinFacts[idx] });
     }
   }
 
-  protected completeLevel(nextScene: string) {
+  completeLevel(nextScene: string) {
     if (this.levelComplete) return;
     this.levelComplete = true;
     this.timeEvent?.remove(false);
     this.stopBgm();
     this.sfx.playFlagpole();
     this.physics.pause();
-    this.time.delayedCall(400, () => {
+    // Wait for stage-clear jingle so next BGM doesn't stack on top of it.
+    this.time.delayedCall(2400, () => {
       this.scene.start(nextScene, {
         score: this.score,
         coins: this.coins,
@@ -232,15 +270,22 @@ export default class BaseLevel extends Phaser.Scene {
     this.stopBgm();
     gameBridge.emit('hide-overlay');
     this.lives--;
-    this.sfx.playDie();
+    this.physics.pause();
 
     if (this.lives <= 0) {
-      this.scene.start('GameOverScene', { score: this.score });
+      this.sfx.playGameOver();
+      this.time.delayedCall(2800, () => {
+        this.scene.start('GameOverScene', { score: this.score });
+      });
     } else {
-      this.scene.restart({
-        score: this.score,
-        coins: this.coins,
-        lives: this.lives,
+      this.sfx.playDie();
+      // Wait for death jingle — restarting immediately was stacking die + overworld BGM.
+      this.time.delayedCall(2600, () => {
+        this.scene.restart({
+          score: this.score,
+          coins: this.coins,
+          lives: this.lives,
+        });
       });
     }
   }

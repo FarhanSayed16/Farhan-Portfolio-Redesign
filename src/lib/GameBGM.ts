@@ -20,10 +20,7 @@ export class GameBGM {
   start(mood: 'overworld' | 'castle' = 'overworld') {
     if (typeof window === 'undefined') return;
     this.checkMute();
-    if (this.playing && this.audio && this.mood === mood) {
-      this.audio.muted = this.muted;
-      return;
-    }
+    // Always restart clean — avoids stacked Audio elements after death/restart races.
     this.stop();
     this.mood = mood;
     this.playing = true;

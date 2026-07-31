@@ -6,6 +6,9 @@ import { Mushroom, FireFlower } from '../sprites/Item';
 import { Fireball } from '../sprites/Fireball';
 import { Coin } from '../sprites/Coin';
 import { spawnEnemyFromObject, wireCombat, handleQBlockHit } from '../gameplay/levelCombat';
+import { breakBrick, bumpBrick } from '../gameplay/brickBreak';
+import { placePipe } from '../gameplay/placePipe';
+import { placeFlagpole } from '../gameplay/placeFlagpole';
 
 export default class Level1Scene extends BaseLevel {
   player!: Player;
@@ -39,7 +42,7 @@ export default class Level1Scene extends BaseLevel {
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.addScenery(map.widthInPixels);
+    this.addScenery(map, this.groundLayer);
 
     this.enemies = this.physics.add.group();
     this.items = this.physics.add.group();
@@ -64,20 +67,9 @@ export default class Level1Scene extends BaseLevel {
       if (obj.type === 'Enemy' || obj.type === 'Koopa') {
         spawnEnemyFromObject(this, this.enemies, obj);
       } else if (obj.type === 'Pipe') {
-        const pipe = this.add.image(x + 32, y + 32, 'pipe').setDepth(4);
-        this.physics.add.existing(pipe, true);
-        const body = pipe.body as Phaser.Physics.Arcade.StaticBody;
-        body.setSize(48, 56);
-        body.setOffset(8, 8);
+        placePipe(this, x, y);
       } else if (obj.type === 'Flagpole') {
-        const pole = this.add.image(x + 16, y + (obj.height || 160) / 2, 'flagpole').setDepth(4);
-        this.physics.add.existing(pole, true);
-        const body = pole.body as Phaser.Physics.Arcade.StaticBody;
-        body.setSize(12, obj.height || 160);
-        body.setOffset(10, 0);
-        this.physics.add.overlap(this.player, pole, () => {
-          this.completeLevel('Level2Scene');
-        });
+        placeFlagpole(this, obj, 'Level2Scene');
       }
     });
 
@@ -124,10 +116,9 @@ export default class Level1Scene extends BaseLevel {
 
     if (handleQBlockHit(this, player, tile)) return;
 
-    if (tile.index === 2 && player.body.blocked.up && this.player.isSuper) {
-      this.groundLayer.removeTileAt(tile.x, tile.y);
-      this.addScore(50);
-      this.sfx.playStomp();
+    if (tile.index === 2 && player.body.blocked.up) {
+      if (this.player.isSuper || this.player.isFire) breakBrick(this, tile);
+      else bumpBrick(this, tile);
     }
   };
 }

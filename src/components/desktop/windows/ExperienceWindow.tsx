@@ -20,7 +20,7 @@ export default function ExperienceWindow() {
       background: 'var(--os-window-body, #ece9d8)' 
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <img src="/icons/experience.svg" alt="Experience" width={24} height={24} style={{ imageRendering: 'pixelated' }} />
+        <img src="/icons/experience.png" alt="Experience" width={24} height={24} style={{ imageRendering: 'pixelated' }} />
         <h2 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>
           Work Experience
         </h2>

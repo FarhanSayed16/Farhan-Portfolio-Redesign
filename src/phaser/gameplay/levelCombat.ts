@@ -89,8 +89,6 @@ export function wireCombat(host: LevelHost) {
     host.sfx.playPowerup();
     host.time.delayedCall(80, () => {
       if (host.levelComplete || host.deathHandled) return;
-      host.events.emit('post-overlay-resume');
-      host.scene.pause();
       const proj = portfolioData.projects[Math.floor(Math.random() * portfolioData.projects.length)];
       gameBridge.emit('show-overlay', { type: 'project', text: proj });
     });
@@ -145,8 +143,7 @@ export function handleQBlockHit(host: LevelHost, player: Player, tile: Phaser.Ti
     spawnBlockCoin(host, worldX, tile.pixelY, () => host.addCoin());
   }
 
-  host.events.emit('post-overlay-resume');
-  host.scene.pause();
+  // Toast only — game keeps running (no pause / OK click).
   const skill = portfolioData.skills[Math.floor(Math.random() * portfolioData.skills.length)];
   gameBridge.emit('show-overlay', { type: 'skill', text: skill });
   return true;

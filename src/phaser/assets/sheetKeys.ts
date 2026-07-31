@@ -40,6 +40,7 @@ export const SHEET_TEXTURE_KEYS = [
   'qblock_2',
   'qblock_3',
   'qblock_empty',
+  'castle',
   'pipe',
   'pipe_top',
   'pipe_body',

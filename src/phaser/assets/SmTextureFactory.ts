@@ -397,18 +397,17 @@ export function generateGameTextures(scene: Phaser.Scene) {
   gTex(scene, 'flagpole', 32, 32, (g) => drawGrid(g, SPRITES.pole, 2));
   gTex(scene, 'flag', 32, 32, (g) => drawGrid(g, SPRITES.flag, 2));
 
-  // Scenery
-  gTex(scene, 'bush', 96, 32, (g) => {
+  // Scenery — single mound (matched sheet pack)
+  gTex(scene, 'bush', 64, 32, (g) => {
     drawGrid(g, SPRITES.bush_tl, 2, 0, 0);
     drawGrid(g, SPRITES.bush_tl, 2, 32, 0, true);
-    drawGrid(g, SPRITES.bush_tl, 2, 64, 0, true);
   });
   gTex(scene, 'cloud', 96, 48, (g) => {
     drawGrid(g, SPRITES.cloud_tl, 2, 0, 16);
     drawGrid(g, SPRITES.cloud_tl, 2, 32, 16, true);
     drawGrid(g, SPRITES.cloud_tl, 2, 64, 16, true);
   });
-  gTex(scene, 'hill', 160, 64, (g) => {
+  gTex(scene, 'hill', 160, 70, (g) => {
     drawGrid(g, SPRITES.hill_tl, 4, 0, 0);
     drawGrid(g, SPRITES.hill_tl, 4, 64, 0, true);
   });
@@ -455,7 +454,7 @@ export function registerGameAnims(scene: Phaser.Scene) {
       { key: 'coin_spin3' },
       { key: 'coin_spin4' },
     ],
-    8,
+    10,
     -1
   );
   once('qblock-idle', [{ key: 'qblock_1' }, { key: 'qblock_2' }, { key: 'qblock_3' }], 6, -1);

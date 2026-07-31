@@ -98,6 +98,27 @@ export default function Desktop() {
   const readmeOpenedRef = useRef(false);
   const [startOpen, setStartOpen] = useState(false);
   const [selectedIconId, setSelectedIconId] = useState<string | null>(null);
+  const [iconsVisible, setIconsVisible] = useState(true);
+  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const runDesktopRefresh = useCallback(() => {
+    if (refreshTimer.current) clearTimeout(refreshTimer.current);
+    setSelectedIconId(null);
+    setIconsVisible(false);
+    refreshTimer.current = setTimeout(() => {
+      setIconsVisible(true);
+      refreshTimer.current = null;
+    }, 320);
+  }, []);
+
+  useEffect(() => {
+    const onRefresh = () => runDesktopRefresh();
+    window.addEventListener('farhan-desktop-refresh', onRefresh);
+    return () => {
+      window.removeEventListener('farhan-desktop-refresh', onRefresh);
+      if (refreshTimer.current) clearTimeout(refreshTimer.current);
+    };
+  }, [runDesktopRefresh]);
 
   const toggleStart = useCallback(() => {
     setStartOpen((prev) => !prev);
@@ -139,6 +160,10 @@ export default function Desktop() {
           dispatch({ type: 'OPEN', id: 'game', title: "Super Mario Bros. - Farhan's Story", component: 'game' });
           break;
         }
+        case 'F5':
+          e.preventDefault();
+          runDesktopRefresh();
+          break;
         case 'Escape': {
           if (startOpen) {
             setStartOpen(false);
@@ -162,7 +187,7 @@ export default function Desktop() {
 
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, [dispatch, windows, closeMenu, startOpen, menu]);
+  }, [dispatch, windows, closeMenu, startOpen, menu, runDesktopRefresh]);
 
   const openWindows = windows.filter((w) => w.isOpen && !w.isMinimized);
   const taskbarH = 30;
@@ -190,6 +215,7 @@ export default function Desktop() {
     >
       {/* Bliss wallpaper — no logo watermark */}
       <div
+        data-desktop-chrome
         style={{
           position: 'absolute',
           inset: 0,
@@ -199,6 +225,7 @@ export default function Desktop() {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           overflow: 'hidden',
+          userSelect: 'none',
         }}
       >
         <div
@@ -219,6 +246,7 @@ export default function Desktop() {
 
       {/* Icon column (left) */}
       <div
+        data-desktop-chrome
         style={{
           position: 'relative',
           flex: 1,
@@ -231,6 +259,9 @@ export default function Desktop() {
           zIndex: 1,
           maxHeight: `calc(100vh - ${taskbarH}px)`,
           overflow: 'hidden',
+          opacity: iconsVisible ? 1 : 0,
+          transition: iconsVisible ? 'opacity 180ms ease-out' : 'none',
+          pointerEvents: iconsVisible ? 'auto' : 'none',
         }}
         onClick={() => setSelectedIconId(null)}
       >

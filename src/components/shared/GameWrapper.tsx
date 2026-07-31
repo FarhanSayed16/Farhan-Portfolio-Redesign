@@ -5,6 +5,7 @@ import type Phaser from 'phaser';
 import { Loader2 } from 'lucide-react';
 import { GameOverlay } from './GameOverlay';
 import { gameBridge } from '@/lib/GameBridge';
+import { silenceGameAudio } from '@/lib/SFXSynth';
 
 interface GameWrapperProps {
   platform?: 'desktop' | 'mobile';
@@ -66,6 +67,8 @@ export default function GameWrapper({ platform = 'desktop', onClose, onHire }: G
       mounted = false;
       window.removeEventListener('keydown', onEsc);
       gameBridge.off('play-again', onPlayAgain);
+      // BGM lives outside Phaser — destroy alone leaves music playing.
+      silenceGameAudio();
       if (gameRef.current) {
         gameRef.current.destroy(true, false);
         gameRef.current = null;

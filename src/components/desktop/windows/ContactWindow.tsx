@@ -1,62 +1,138 @@
 'use client';
 
-import { useState, useCallback, type FormEvent } from 'react';
+import { useState, useCallback, useRef, type FormEvent } from 'react';
 import { Send, Paperclip } from 'lucide-react';
-import { getEmailAddress, getMailtoHref } from '@/lib/content';
+import { getEmailAddress } from '@/lib/content';
+
+const COOLDOWN_MS = 30_000;
 
 /**
- * Contact — Outlook-style compose form with EmailJS or mailto fallback.
+ * Contact — Outlook-style compose. Sends via /api/contact (no mailto popup).
  */
 export default function ContactWindow() {
   const [fromName, setFromName] = useState('');
   const [fromEmail, setFromEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'mailto' | 'error'>('idle');
+  const [honeypot, setHoneypot] = useState('');
+  const [status, setStatus] = useState<
+    'idle' | 'sending' | 'sent' | 'activate' | 'error' | 'cooldown'
+  >('idle');
+  const [errorText, setErrorText] = useState('');
+  const [activateHint, setActivateHint] = useState('');
+  const lastSentAt = useRef(0);
 
-  const handleSubmit = useCallback(async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setErrorText('');
+      setActivateHint('');
 
-    if (!subject.trim() || !body.trim()) return;
+      if (honeypot.trim()) return;
+      if (!subject.trim() || !body.trim()) return;
+      if (!fromEmail.trim()) {
+        setStatus('error');
+        setErrorText('Please enter your email so I can reply.');
+        return;
+      }
 
-    // Check if EmailJS env vars are set
-    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+      const now = Date.now();
+      if (now - lastSentAt.current < COOLDOWN_MS) {
+        setStatus('cooldown');
+        return;
+      }
 
-    if (serviceId && templateId && publicKey) {
       try {
         setStatus('sending');
-        const emailjs = await import('@emailjs/browser');
-        await emailjs.send(serviceId, templateId, {
-          from_name: fromName,
-          from_email: fromEmail,
-          subject,
-          message: body,
-        }, publicKey);
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: fromName,
+            email: fromEmail,
+            subject,
+            message: body,
+            company_website: honeypot,
+          }),
+        });
+
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          needsActivation?: boolean;
+          message?: string;
+        };
+
+        if (!res.ok) {
+          setStatus('error');
+          setErrorText(data.error || 'Failed to send. Try again.');
+          return;
+        }
+
+        lastSentAt.current = Date.now();
+        if (data.needsActivation) {
+          setActivateHint(
+            data.message ||
+              'Check your Gmail (and Spam) for FormSubmit’s Activate email, then click it.'
+          );
+          setStatus('activate');
+          return;
+        }
         setStatus('sent');
       } catch {
         setStatus('error');
+        setErrorText('Failed to send. Check your connection and try again.');
       }
-    } else {
-      window.open(getMailtoHref(subject, body), '_blank');
-      setStatus('mailto');
-    }
-  }, [fromName, fromEmail, subject, body]);
+    },
+    [fromName, fromEmail, subject, body, honeypot]
+  );
 
-  if (status === 'sent' || status === 'mailto') {
+  if (status === 'sent' || status === 'activate') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', padding: '2rem' }}>
-        <div style={{ fontSize: '12px', fontWeight: 700, color: '#006600' }}>
-          {status === 'sent' ? 'MESSAGE SENT!' : 'MAIL CLIENT OPENED'}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          gap: '1rem',
+          padding: '2rem',
+        }}
+      >
+        <div
+          style={{
+            fontSize: '12px',
+            fontWeight: 700,
+            color: status === 'activate' ? '#0a246a' : '#006600',
+            textAlign: 'center',
+          }}
+        >
+          {status === 'activate' ? 'ONE MORE STEP' : 'MESSAGE SENT!'}
         </div>
-        <div style={{ fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center' }}>
-          {status === 'sent'
-            ? "Thanks for reaching out. I'll get back to you soon."
-            : 'Finish sending in your mail app, or compose another message here.'}
+        <div style={{ fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center', maxWidth: 340 }}>
+          {status === 'activate'
+            ? activateHint
+            : 'Thanks for reaching out. I’ll get back to you soon at your email.'}
         </div>
-        <button onClick={() => { setStatus('idle'); setSubject(''); setBody(''); }} className="os-button" style={{ marginTop: '0.5rem' }}>
-          Compose Another
+        {status === 'activate' && (
+          <div style={{ fontSize: '11px', color: '#666', textAlign: 'center', maxWidth: 340, lineHeight: 1.5 }}>
+            Look for mail from <b>FormSubmit</b> to <b>farhanbuilds16@gmail.com</b>. After you
+            activate once, every future contact message lands in your inbox automatically.
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={() => {
+            setStatus('idle');
+            if (status === 'sent') {
+              setSubject('');
+              setBody('');
+            }
+          }}
+          className="os-button"
+          style={{ marginTop: '0.5rem' }}
+        >
+          {status === 'activate' ? 'Back' : 'Compose Another'}
         </button>
       </div>
     );
@@ -64,8 +140,33 @@ export default function ContactWindow() {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Header fields */}
-      <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--os-border)', display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0 }}>
+      <div
+        aria-hidden="true"
+        style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}
+      >
+        <label>
+          Company website
+          <input
+            type="text"
+            name="company_website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </label>
+      </div>
+
+      <div
+        style={{
+          padding: '8px 12px',
+          borderBottom: '1px solid var(--os-border)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          flexShrink: 0,
+        }}
+      >
         <FieldRow label="From">
           <input
             type="text"
@@ -78,7 +179,8 @@ export default function ContactWindow() {
             type="email"
             value={fromEmail}
             onChange={(e) => setFromEmail(e.target.value)}
-            placeholder="your@email.com"
+            placeholder="your@email.com *"
+            required
             style={{ ...inputStyle, flex: 1 }}
           />
         </FieldRow>
@@ -99,7 +201,6 @@ export default function ContactWindow() {
         </FieldRow>
       </div>
 
-      {/* Body */}
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
@@ -119,17 +220,22 @@ export default function ContactWindow() {
         }}
       />
 
-      {/* Footer */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderTop: '1px solid #c0c0c0', flexShrink: 0, background: '#ece9d8' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '8px 12px',
+          borderTop: '1px solid #c0c0c0',
+          flexShrink: 0,
+          background: '#ece9d8',
+        }}
+      >
         <button
           type="submit"
           disabled={status === 'sending'}
           className="os-button"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-          }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
         >
           <Send size={13} />
           {status === 'sending' ? 'Sending...' : 'Send Message'}
@@ -138,8 +244,13 @@ export default function ContactWindow() {
           <Paperclip size={13} /> Attach Resume
         </button>
         {status === 'error' && (
-          <span style={{ fontSize: '11px', color: '#c00', marginLeft: 'auto' }}>
-            Failed to send. Try again.
+          <span style={{ fontSize: '11px', color: '#c00', marginLeft: 'auto', maxWidth: 220 }}>
+            {errorText || 'Failed to send. Try again.'}
+          </span>
+        )}
+        {status === 'cooldown' && (
+          <span style={{ fontSize: '11px', color: '#666', marginLeft: 'auto' }}>
+            Please wait a moment before sending again.
           </span>
         )}
       </div>
@@ -151,9 +262,7 @@ function FieldRow({ label, children }: { label: string; children: React.ReactNod
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <span style={{ fontSize: '11px', color: 'var(--text-muted)', width: 55, flexShrink: 0 }}>{label}:</span>
-      <div style={{ display: 'flex', gap: '6px', flex: 1 }}>
-        {children}
-      </div>
+      <div style={{ display: 'flex', gap: '6px', flex: 1 }}>{children}</div>
     </div>
   );
 }
