@@ -82,7 +82,9 @@ export async function sendContactMessage(payload: ContactPayload): Promise<Conta
 
     // 429 / validation from API
     if (apiRes.status === 429 || (apiRes.status === 400 && data.error)) {
-      return { ok: false, error: data.error || 'Failed to send.', cooldown: apiRes.status === 429 };
+      return apiRes.status === 429
+        ? { ok: false, error: data.error || 'Failed to send.', cooldown: true }
+        : { ok: false, error: data.error || 'Failed to send.' };
     }
 
     // useClient or FormSubmit-blocked 502 → browser FormSubmit below
