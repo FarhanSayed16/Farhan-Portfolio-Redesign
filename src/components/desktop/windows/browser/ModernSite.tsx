@@ -34,6 +34,7 @@ import InteractiveGitHubGrid from './InteractiveGitHubGrid';
 import LaserDivider from './LaserDivider';
 import { Mail, Terminal, ArrowUpRight } from 'lucide-react';
 import Lenis from 'lenis';
+import ContactForm from '@/components/shared/ContactForm';
 
 interface ModernSiteProps {
   /** Desktop IE only — hidden on mobile standalone (no Time Machine on phones). */
@@ -175,6 +176,7 @@ export function ModernSite({
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
+  const [composeOpen, setComposeOpen] = useState(false);
   // Standalone scrolls the document (native, compositor-friendly); embedded scrolls its own box.
   const { scrollYProgress } = useScroll(standalone ? {} : { container: scrollContainerRef });
   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
@@ -547,13 +549,34 @@ export function ModernSite({
             </p>
 
             <div className="premium-contact-actions">
-              <a className="cyber-btn-primary" href={getMailtoHref('Hello from farhanbuilds.in')}>
-                <span className="cyber-btn-glitch" />
-                Initiate Contact <ArrowUpRight size={18} className="cyber-arrow" />
-              </a>
-              <button type="button" className="cyber-btn-secondary" onClick={openContact}>
-                <Terminal size={18} className="terminal-icon" /> Open Terminal
-              </button>
+              {composeOpen && standalone ? (
+                <div className="mps-contact-panel">
+                  <div className="mps-contact-panel-head">
+                    <span>Send a message</span>
+                    <button type="button" className="mps-contact-close" onClick={() => setComposeOpen(false)} aria-label="Close form">
+                      ×
+                    </button>
+                  </div>
+                  <ContactForm onDone={() => setComposeOpen(false)} />
+                </div>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="cyber-btn-primary"
+                    onClick={() => {
+                      if (standalone) setComposeOpen(true);
+                      else openContact();
+                    }}
+                  >
+                    <span className="cyber-btn-glitch" />
+                    Initiate Contact <ArrowUpRight size={18} className="cyber-arrow" />
+                  </button>
+                  <button type="button" className="cyber-btn-secondary" onClick={openContact}>
+                    <Terminal size={18} className="terminal-icon" /> Open Terminal
+                  </button>
+                </>
+              )}
             </div>
 
             <div className="premium-social-cards">
@@ -569,12 +592,21 @@ export function ModernSite({
                   <span className="social-label">LinkedIn</span>
                 </div>
               </a>
-              <a href={getMailtoHref('Hello')} className="social-card email-card">
-                <div className="social-card-inner">
-                  <Mail size={20} className="social-icon-svg" />
-                  <span className="social-label">{getEmailAddress()}</span>
-                </div>
-              </a>
+              {standalone ? (
+                <button type="button" className="social-card email-card" onClick={() => setComposeOpen(true)}>
+                  <div className="social-card-inner">
+                    <Mail size={20} className="social-icon-svg" />
+                    <span className="social-label">{getEmailAddress()}</span>
+                  </div>
+                </button>
+              ) : (
+                <a href={getMailtoHref('Hello')} className="social-card email-card">
+                  <div className="social-card-inner">
+                    <Mail size={20} className="social-icon-svg" />
+                    <span className="social-label">{getEmailAddress()}</span>
+                  </div>
+                </a>
+              )}
               {getWhatsAppHref() && (
                 <a href={getWhatsAppHref('Hello Farhan') || ''} target="_blank" rel="noopener noreferrer" className="social-card">
                   <div className="social-card-inner">
