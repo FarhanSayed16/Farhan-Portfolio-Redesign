@@ -1,0 +1,3 @@
+# Farhan OS — allow search engines (portfolio wants to be found).
+User-agent: *
+Allow: /
