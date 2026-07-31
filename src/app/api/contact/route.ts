@@ -10,6 +10,8 @@ type Body = {
   subject?: string;
   message?: string;
   company_website?: string;
+  /** Client will FormSubmit itself when server path can't (CF blocks FormSubmit from Vercel). */
+  clientFallback?: boolean;
 };
 
 function bad(msg: string, status = 400) {
@@ -17,9 +19,10 @@ function bad(msg: string, status = 400) {
 }
 
 /**
- * Contact → FormSubmit.
- * FormSubmit requires a real Origin/Referer (browser page). Server-only fetches
- * without those headers return a fake-looking 200 that never emails anyone.
+ * Contact API.
+ * - With WEB3FORMS_ACCESS_KEY: sends from the server (reliable on Vercel).
+ * - Without: rate-limits + validates, then tells the client to FormSubmit from the browser
+ *   (FormSubmit blocks Vercel IPs with a Cloudflare challenge).
  */
 export async function POST(request: Request) {
   const limited = rateLimit(`contact:${clientIp(request)}`, { limit: 8, windowMs: 60_000 });
@@ -54,7 +57,6 @@ export async function POST(request: Request) {
   const to = getEmailAddress();
   if (!to) return bad('Inbox not configured', 500);
 
-  // Prefer Web3Forms when configured — more reliable than FormSubmit activation.
   const web3Key = process.env.WEB3FORMS_ACCESS_KEY?.trim();
   if (web3Key) {
     try {
@@ -81,60 +83,17 @@ export async function POST(request: Request) {
     }
   }
 
-  const origin = request.headers.get('origin') || 'http://localhost:3000';
-  const referer = request.headers.get('referer') || `${origin}/`;
-
-  try {
-    const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Origin: origin,
-        Referer: referer,
-      },
-      body: JSON.stringify({
-        name: name || 'Portfolio visitor',
-        email,
-        _replyto: email,
-        subject: `[Farhan OS] ${subject}`,
-        message,
-        _template: 'table',
-        _captcha: 'false',
-        _url: referer,
-      }),
-    });
-
-    const raw = await res.text();
-    let data: { success?: string | boolean; message?: string } = {};
-    try {
-      data = JSON.parse(raw) as typeof data;
-    } catch {
-      console.error('FormSubmit non-JSON', raw.slice(0, 200));
-      return bad('Failed to send message', 502);
-    }
-
-    const ok = data.success === true || data.success === 'true';
-    const msg = (data.message || '').toLowerCase();
-
-    // Activation pending — FormSubmit emailed the inbox owner; treat as soft success with instructions.
-    if (!ok && msg.includes('activation')) {
-      return NextResponse.json({
-        ok: true,
-        needsActivation: true,
-        message:
-          'Check farhanbuilds16@gmail.com (and Spam/Promotions) for a FormSubmit “Activate Form” email, then click Activate. After that, messages will arrive.',
-      });
-    }
-
-    if (!ok) {
-      console.error('FormSubmit rejected', data);
-      return bad(data.message || 'Failed to send message', 502);
-    }
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error('Contact send failed', err);
-    return bad('Failed to send message', 502);
+  // No Web3Forms — client must FormSubmit (server → formsubmit.co hits Cloudflare).
+  if (body.clientFallback) {
+    return NextResponse.json({ ok: true, useClient: true });
   }
+
+  return NextResponse.json(
+    {
+      error:
+        'Email relay needs a browser submit, or set WEB3FORMS_ACCESS_KEY on the server.',
+      useClient: true,
+    },
+    { status: 502 }
+  );
 }

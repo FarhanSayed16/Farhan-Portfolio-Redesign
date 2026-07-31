@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useCallback, useRef, type FormEvent } from 'react';
+import { useState, useCallback, type FormEvent } from 'react';
 import { Send, Paperclip } from 'lucide-react';
 import { getEmailAddress } from '@/lib/content';
-
-const COOLDOWN_MS = 30_000;
+import { sendContactMessage } from '@/lib/sendContactMessage';
 
 /**
- * Contact — Outlook-style compose. Sends via /api/contact (no mailto popup).
+ * Contact — Outlook-style compose. Sends via FormSubmit from the browser
+ * (Vercel serverless → FormSubmit is blocked by Cloudflare).
  */
 export default function ContactWindow() {
   const [fromName, setFromName] = useState('');
@@ -20,68 +20,35 @@ export default function ContactWindow() {
   >('idle');
   const [errorText, setErrorText] = useState('');
   const [activateHint, setActivateHint] = useState('');
-  const lastSentAt = useRef(0);
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
       setErrorText('');
       setActivateHint('');
+      setStatus('sending');
 
-      if (honeypot.trim()) return;
-      if (!subject.trim() || !body.trim()) return;
-      if (!fromEmail.trim()) {
-        setStatus('error');
-        setErrorText('Please enter your email so I can reply.');
+      const result = await sendContactMessage({
+        name: fromName,
+        email: fromEmail,
+        subject,
+        message: body,
+        company_website: honeypot,
+      });
+
+      if (!result.ok) {
+        setStatus(result.cooldown ? 'cooldown' : 'error');
+        setErrorText(result.error);
         return;
       }
 
-      const now = Date.now();
-      if (now - lastSentAt.current < COOLDOWN_MS) {
-        setStatus('cooldown');
+      if ('needsActivation' in result && result.needsActivation) {
+        setActivateHint(result.message);
+        setStatus('activate');
         return;
       }
 
-      try {
-        setStatus('sending');
-        const res = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: fromName,
-            email: fromEmail,
-            subject,
-            message: body,
-            company_website: honeypot,
-          }),
-        });
-
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-          needsActivation?: boolean;
-          message?: string;
-        };
-
-        if (!res.ok) {
-          setStatus('error');
-          setErrorText(data.error || 'Failed to send. Try again.');
-          return;
-        }
-
-        lastSentAt.current = Date.now();
-        if (data.needsActivation) {
-          setActivateHint(
-            data.message ||
-              'Check your Gmail (and Spam) for FormSubmit’s Activate email, then click it.'
-          );
-          setStatus('activate');
-          return;
-        }
-        setStatus('sent');
-      } catch {
-        setStatus('error');
-        setErrorText('Failed to send. Check your connection and try again.');
-      }
+      setStatus('sent');
     },
     [fromName, fromEmail, subject, body, honeypot]
   );
@@ -112,7 +79,7 @@ export default function ContactWindow() {
         <div style={{ fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center', maxWidth: 340 }}>
           {status === 'activate'
             ? activateHint
-            : 'Thanks for reaching out. I’ll get back to you soon at your email.'}
+            : "Thanks for reaching out. I'll get back to you soon at your email."}
         </div>
         {status === 'activate' && (
           <div style={{ fontSize: '11px', color: '#666', textAlign: 'center', maxWidth: 340, lineHeight: 1.5 }}>
@@ -250,7 +217,7 @@ export default function ContactWindow() {
         )}
         {status === 'cooldown' && (
           <span style={{ fontSize: '11px', color: '#666', marginLeft: 'auto' }}>
-            Please wait a moment before sending again.
+            {errorText || 'Please wait a moment before sending again.'}
           </span>
         )}
       </div>

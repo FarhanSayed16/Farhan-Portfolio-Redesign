@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useCallback, useRef, type FormEvent } from 'react';
-
-const COOLDOWN_MS = 30_000;
+import { useState, useCallback, type FormEvent } from 'react';
+import { sendContactMessage } from '@/lib/sendContactMessage';
 
 type Status = 'idle' | 'sending' | 'sent' | 'activate' | 'error' | 'cooldown';
 
@@ -10,7 +9,7 @@ type Props = {
   onDone?: () => void;
 };
 
-/** Mobile / dark portfolio compose → POST /api/contact (FormSubmit). */
+/** Mobile / dark portfolio compose → FormSubmit from the browser (Vercel can't). */
 export default function ContactForm({ onDone }: Props) {
   const [fromName, setFromName] = useState('');
   const [fromEmail, setFromEmail] = useState('');
@@ -20,68 +19,35 @@ export default function ContactForm({ onDone }: Props) {
   const [status, setStatus] = useState<Status>('idle');
   const [errorText, setErrorText] = useState('');
   const [activateHint, setActivateHint] = useState('');
-  const lastSentAt = useRef(0);
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
       setErrorText('');
       setActivateHint('');
+      setStatus('sending');
 
-      if (honeypot.trim()) return;
-      if (!subject.trim() || !body.trim()) return;
-      if (!fromEmail.trim()) {
-        setStatus('error');
-        setErrorText('Please enter your email so I can reply.');
+      const result = await sendContactMessage({
+        name: fromName,
+        email: fromEmail,
+        subject,
+        message: body,
+        company_website: honeypot,
+      });
+
+      if (!result.ok) {
+        setStatus(result.cooldown ? 'cooldown' : 'error');
+        setErrorText(result.error);
         return;
       }
 
-      const now = Date.now();
-      if (now - lastSentAt.current < COOLDOWN_MS) {
-        setStatus('cooldown');
+      if ('needsActivation' in result && result.needsActivation) {
+        setActivateHint(result.message);
+        setStatus('activate');
         return;
       }
 
-      try {
-        setStatus('sending');
-        const res = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: fromName,
-            email: fromEmail,
-            subject,
-            message: body,
-            company_website: honeypot,
-          }),
-        });
-
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-          needsActivation?: boolean;
-          message?: string;
-        };
-
-        if (!res.ok) {
-          setStatus('error');
-          setErrorText(data.error || 'Failed to send. Try again.');
-          return;
-        }
-
-        lastSentAt.current = Date.now();
-        if (data.needsActivation) {
-          setActivateHint(
-            data.message ||
-              'Check your Gmail (and Spam) for FormSubmit’s Activate email, then click it.'
-          );
-          setStatus('activate');
-          return;
-        }
-        setStatus('sent');
-      } catch {
-        setStatus('error');
-        setErrorText('Failed to send. Check your connection and try again.');
-      }
+      setStatus('sent');
     },
     [fromName, fromEmail, subject, body, honeypot]
   );
@@ -170,7 +136,7 @@ export default function ContactForm({ onDone }: Props) {
       </button>
       {status === 'error' && <p className="mps-contact-status is-error">{errorText || 'Failed to send.'}</p>}
       {status === 'cooldown' && (
-        <p className="mps-contact-status">Please wait a moment before sending again.</p>
+        <p className="mps-contact-status">{errorText || 'Please wait a moment before sending again.'}</p>
       )}
     </form>
   );
