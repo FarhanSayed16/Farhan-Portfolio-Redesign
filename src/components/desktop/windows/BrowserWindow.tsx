@@ -210,12 +210,13 @@ export default function BrowserWindow() {
             >
               <ModernSite
                 onReplayEras={replayEras}
-                onOpenProjects={() =>
+                onOpenProjects={(projectId) =>
                   dispatch({
                     type: 'OPEN',
                     id: 'projects',
                     title: 'Projects — Explorer',
                     component: 'projects',
+                    payload: projectId ? { projectId } : undefined,
                   })
                 }
                 onOpenContact={() =>

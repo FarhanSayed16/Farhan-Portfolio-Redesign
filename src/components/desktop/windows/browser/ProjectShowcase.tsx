@@ -4,26 +4,35 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import type { Project } from '@/lib/content';
 
-/* ── Gradient palettes per project category ─────────────────── */
-const GRADIENTS: Record<string, string> = {
-  web: 'linear-gradient(135deg, #0f2027 0%, #203a43 40%, #2c5364 100%)',
-  ai: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
-  mobile: 'linear-gradient(135deg, #141e30 0%, #243b55 100%)',
-  default: 'linear-gradient(135deg, #0a0e1a 0%, #1a1a2e 50%, #16213e 100%)',
+/* Soft fallback only when a screenshot is missing — not tinted over photos */
+const FALLBACK: Record<string, string> = {
+  platforms: 'linear-gradient(135deg, #141820 0%, #1c2430 100%)',
+  web: 'linear-gradient(135deg, #141820 0%, #1c2430 100%)',
+  ai: 'linear-gradient(135deg, #14141c 0%, #1a1a28 100%)',
+  mobile: 'linear-gradient(135deg, #141820 0%, #1a2230 100%)',
+  hardware: 'linear-gradient(135deg, #121816 0%, #1a241e 100%)',
+  robotics: 'linear-gradient(135deg, #121816 0%, #1a241e 100%)',
+  default: 'linear-gradient(135deg, #0f1218 0%, #161b24 100%)',
 };
 
-function getGradient(category: string): string {
-  return GRADIENTS[category] || GRADIENTS.default;
+function fallbackBg(category: string): string {
+  return FALLBACK[category] || FALLBACK.default;
 }
 
 interface Props {
   projects: Project[];
-  openProjects: () => void;
+  /** Desktop OS: open Projects Explorer on this case study. Mobile: optional no-op. */
+  onOpenCaseStudy?: (projectId: string) => void;
 }
 
-export function ProjectShowcase({ projects, openProjects }: Props) {
+/**
+ * Selected Work carousel.
+ * Intent: sell the *product*, not the file manager.
+ * Primary = live site (proof). Secondary = case study (story) when the OS can host it.
+ */
+export function ProjectShowcase({ projects, onOpenCaseStudy }: Props) {
   const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(1); // 1 = right, -1 = left
+  const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
 
   const count = projects.length;
@@ -33,10 +42,9 @@ export function ProjectShowcase({ projects, openProjects }: Props) {
       setDirection(dir);
       setIndex((i) => (i + dir + count) % count);
     },
-    [count],
+    [count]
   );
 
-  // Auto-advance every 5s
   useEffect(() => {
     if (paused || count <= 1) return;
     const id = setInterval(() => go(1), 5000);
@@ -44,6 +52,8 @@ export function ProjectShowcase({ projects, openProjects }: Props) {
   }, [paused, count, go]);
 
   const p = projects[index];
+  const hasLive = Boolean(p?.demoUrl);
+  const hasCaseStudy = typeof onOpenCaseStudy === 'function';
 
   const variants = {
     enter: (d: number) => ({ x: d > 0 ? 100 : -100, opacity: 0, scale: 0.95 }),
@@ -51,28 +61,19 @@ export function ProjectShowcase({ projects, openProjects }: Props) {
     exit: (d: number) => ({ x: d > 0 ? -100 : 100, opacity: 0, scale: 0.95 }),
   };
 
-  // --- 3D Hover Tilt Logic ---
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
   const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
-  
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['5deg', '-5deg']);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-5deg', '5deg']);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
   const handleMouseLeave = () => {
@@ -80,6 +81,8 @@ export function ProjectShowcase({ projects, openProjects }: Props) {
     y.set(0);
     setPaused(false);
   };
+
+  if (!p || count === 0) return null;
 
   return (
     <section className="bv-section bv-showcase" id="bv-work">
@@ -107,63 +110,94 @@ export function ProjectShowcase({ projects, openProjects }: Props) {
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={handleMouseLeave}
             >
-              {/* Corner framing for cyberpunk aesthetic */}
               <div className="bv-frame-bracket top-left" aria-hidden />
               <div className="bv-frame-bracket top-right" aria-hidden />
               <div className="bv-frame-bracket bottom-left" aria-hidden />
               <div className="bv-frame-bracket bottom-right" aria-hidden />
 
-              {/* Visual Side (Left) */}
-              <div
-                className="bv-showcase-visual"
-                style={{ background: getGradient(p.category) }}
-              >
-                {/* Embedded Generative Artwork/Mockup */}
-                {p.image && (
-                  <img 
-                    src={p.image} 
-                    alt={p.title} 
-                    className="bv-showcase-bg-img"
-                  />
-                )}
-                
-                <div className="bv-showcase-visual-overlay" />
-                
-                <div className="bv-showcase-visual-content" style={{ transform: 'translateZ(30px)' }}>
-                  <span className="bv-showcase-num">0{index + 1}</span>
-                  <div className="bv-showcase-tech-cloud">
-                    {p.tech.slice(0, 5).map((t) => (
-                      <span key={t} className="bv-showcase-tech-pill">
-                        {t}
-                      </span>
-                    ))}
+              <div className="bv-showcase-visual" style={{ background: fallbackBg(p.category) }}>
+                {p.image && !p.image.includes('placeholder') ? (
+                  <>
+                    {/* Blurred bleed so letterboxing never reads as empty */}
+                    <img 
+                      src={p.image} 
+                      alt="" 
+                      className="bv-showcase-bg-fill" 
+                      style={p.id === 'knoq' ? { filter: 'blur(32px) saturate(1.08) brightness(0.15)' } : undefined}
+                      aria-hidden 
+                    />
+                    <div className="bv-showcase-shot">
+                      <img src={p.image} alt={`${p.title} preview`} className="bv-showcase-bg-img" />
+                    </div>
+                  </>
+                ) : (
+                  <div className="bv-showcase-no-preview">
+                    <span className="bv-showcase-no-preview-icon" aria-hidden>
+                      {p.category === 'ai'
+                        ? '🧠'
+                        : p.category === 'hardware' || p.category === 'robotics'
+                          ? '🤖'
+                          : p.category === 'platforms'
+                            ? '🧩'
+                            : p.category === 'mobile'
+                              ? '📱'
+                              : '💻'}
+                    </span>
+                    <span className="bv-showcase-no-preview-label">Preview Coming Soon</span>
                   </div>
-                </div>
-                {/* Decorative grid overlay */}
-                <div className="bv-showcase-grid-overlay" aria-hidden />
+                )}
               </div>
 
-              {/* Text Content (Right) */}
               <div className="bv-showcase-info" style={{ transform: 'translateZ(40px)' }}>
                 <h3 className="bv-showcase-title">{p.title}</h3>
                 <p className="bv-showcase-tagline">{p.tagline}</p>
-                {p.award && (
-                  <span className="bv-showcase-award">🏆 {p.award}</span>
-                )}
+                {p.award && <span className="bv-showcase-award">🏆 {p.award}</span>}
                 <p className="bv-showcase-desc">{p.shortDescription}</p>
-                <button
-                  type="button"
-                  className="bv-btn bv-btn-glow"
-                  onClick={openProjects}
-                >
-                  <span className="btn-content">View Details</span>
-                  <span className="btn-arrow">→</span>
-                </button>
+
+                <div className="bv-showcase-tech-cloud">
+                  {p.tech.slice(0, 5).map((t) => (
+                    <span key={t} className="bv-showcase-tech-pill">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="bv-showcase-actions">
+                  {hasLive ? (
+                    <a
+                      className="bv-btn bv-btn-glow"
+                      href={p.demoUrl!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="btn-content">Open Live Site</span>
+                      <span className="btn-arrow">↗</span>
+                    </a>
+                  ) : hasCaseStudy ? (
+                    <button
+                      type="button"
+                      className="bv-btn bv-btn-glow"
+                      onClick={() => onOpenCaseStudy!(p.id)}
+                    >
+                      <span className="btn-content">View Case Study</span>
+                      <span className="btn-arrow">→</span>
+                    </button>
+                  ) : null}
+
+                  {hasLive && hasCaseStudy && (
+                    <button
+                      type="button"
+                      className="bv-btn bv-btn-ghost"
+                      onClick={() => onOpenCaseStudy!(p.id)}
+                    >
+                      Case study
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Nav arrows */}
           {count > 1 && (
             <>
               <button
@@ -186,7 +220,6 @@ export function ProjectShowcase({ projects, openProjects }: Props) {
           )}
         </div>
 
-        {/* Dots */}
         {count > 1 && (
           <div className="bv-showcase-dots">
             {projects.map((proj, i) => (

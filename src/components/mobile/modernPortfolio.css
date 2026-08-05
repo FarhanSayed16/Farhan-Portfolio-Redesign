@@ -437,13 +437,18 @@ body.mps-unlocked {
 
 .bv-modern-viewport--standalone .bv-showcase-visual {
   aspect-ratio: 16 / 10;
-  padding: 16px;
+  min-height: 200px;
+  padding: 0;
   border-right: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.bv-modern-viewport--standalone .bv-showcase-shot {
+  inset: 0;
+}
+
 .bv-modern-viewport--standalone .bv-showcase-num {
-  font-size: 40px;
+  display: none !important;
 }
 
 .bv-modern-viewport--standalone .bv-showcase-info {
@@ -474,10 +479,36 @@ body.mps-unlocked {
   justify-self: end;
 }
 
-.bv-modern-viewport--standalone .bv-showcase-dots {
-  margin-top: 14px;
-  align-items: center;
-  gap: 10px;
+.bv-modern-viewport--standalone .bv-showcase-actions {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-actions .bv-btn {
+  width: 100%;
+  justify-content: center;
+  min-height: 48px;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-bg-img {
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+.bv-modern-viewport--standalone .bv-showcase-visual-overlay,
+.bv-modern-viewport--standalone .bv-showcase-visual-content {
+  display: none !important;
+}
+
+.bv-modern-viewport--standalone a.bv-btn-glow,
+.bv-modern-viewport--standalone .bv-showcase-actions .bv-btn-glow {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border-color: #f87171 !important;
 }
 
 /* Story + stats */

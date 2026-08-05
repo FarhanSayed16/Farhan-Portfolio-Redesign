@@ -46,3 +46,6 @@ next-env.d.ts
 /assets/preview/
 /assets/source/smb-sheets/
 /assets/source/smb-sfx/
+
+# raw project screenshot dumps (curated webp lives in public/images/projects/)
+/project_images/

@@ -2,15 +2,19 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import type { Project } from '@/lib/content';
 
-export function StickyProjects({ projects, openProjects }: { projects: Project[], openProjects: () => void }) {
+export function StickyProjects({
+  projects,
+  onOpenCaseStudy,
+}: {
+  projects: Project[];
+  onOpenCaseStudy?: (projectId: string) => void;
+}) {
   const targetRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: targetRef,
   });
 
-  // Depending on how many projects, we scroll left by a certain percentage.
-  // 3 projects = scroll by -66% of the container width to show the last one.
   const x = useTransform(scrollYProgress, [0, 1], ['0%', reduceMotion ? '0%' : '-66.66%']);
 
   return (
@@ -27,16 +31,33 @@ export function StickyProjects({ projects, openProjects }: { projects: Project[]
                 <h3 className="title">{p.title}</h3>
                 <p className="tag">{p.tagline}</p>
                 {p.award && <span className="meta">{p.award}</span>}
-                <button type="button" className="bv-btn bv-btn-ghost bv-sticky-project-btn" onClick={openProjects}>
-                  View Details →
-                </button>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                  {p.demoUrl ? (
+                    <a
+                      className="bv-btn bv-btn-ghost bv-sticky-project-btn"
+                      href={p.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open Live Site ↗
+                    </a>
+                  ) : null}
+                  {onOpenCaseStudy && (
+                    <button
+                      type="button"
+                      className="bv-btn bv-btn-ghost bv-sticky-project-btn"
+                      onClick={() => onOpenCaseStudy(p.id)}
+                    >
+                      {p.demoUrl ? 'Case study' : 'View Case Study →'}
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="bv-sticky-project-image-wrapper">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={p.image} 
-                  alt={p.title} 
-                  className="bv-sticky-project-image" 
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="bv-sticky-project-image"
                   onError={(e) => {
                     e.currentTarget.parentElement!.style.display = 'none';
                   }}

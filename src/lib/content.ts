@@ -60,9 +60,32 @@ export interface Project {
   tech: string[];
   repoUrl: string | null;
   demoUrl: string | null;
+  /** Primary axis for colors / legacy filters */
   category: string;
+  /**
+   * Explorer folders this project lives in (multi-surface work sits in many).
+   * Falls back to [category] when omitted.
+   */
+  folders?: string[];
   featured: boolean;
   archived: boolean;
+}
+
+/** Explorer folder ids and stable display order */
+export const PROJECT_FOLDER_META: { id: string; label: string }[] = [
+  { id: 'platforms', label: 'Platforms' },
+  { id: 'ai', label: 'AI Systems' },
+  { id: 'hardware', label: 'Hardware · IoT' },
+  { id: 'web', label: 'Web · Commerce' },
+];
+
+export function projectFolders(p: Project): string[] {
+  if (p.folders?.length) return p.folders;
+  // Map legacy single categories into the new tree
+  if (p.category === 'robotics') return ['hardware'];
+  if (p.category === 'mobile') return ['platforms'];
+  if (p.category === 'ai') return ['ai'];
+  return [p.category || 'web'];
 }
 
 export interface SkillCategory {

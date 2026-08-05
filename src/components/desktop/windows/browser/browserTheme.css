@@ -317,6 +317,17 @@
   /* Hide default cursor for custom target cursor */
 }
 
+/* XP theme sets a { color: #0066cc } globally — don't bleed into the modern site */
+.bv-modern-viewport a,
+.bv-modern a {
+  color: inherit;
+}
+
+.bv-modern-viewport a:visited,
+.bv-modern a:visited {
+  color: inherit;
+}
+
 .bv-modern-viewport *,
 .bv-modern *,
 .bv-modern-viewport a,
@@ -829,16 +840,17 @@
 
 .bv-showcase-stage {
   position: relative;
-  min-height: 340px;
+  min-height: 360px;
 }
 
 .bv-showcase-card {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: center;
-  background: rgba(13, 17, 23, 0.65);
+  /* Wider preview column so ~2:1 landings aren't half-cropped */
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  gap: 0;
+  align-items: stretch;
+  background: rgba(13, 17, 23, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   overflow: hidden;
@@ -848,140 +860,255 @@
 
 .bv-frame-bracket {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(239, 68, 68, 0.8);
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(239, 68, 68, 0.6);
   z-index: 10;
   pointer-events: none;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bv-frame-bracket.top-left {
-  top: 8px;
-  left: 8px;
+  top: -6px;
+  left: -6px;
   border-right: none;
   border-bottom: none;
 }
 
 .bv-frame-bracket.top-right {
-  top: 8px;
-  right: 8px;
+  top: -6px;
+  right: -6px;
   border-left: none;
   border-bottom: none;
 }
 
 .bv-frame-bracket.bottom-left {
-  bottom: 8px;
-  left: 8px;
+  bottom: -6px;
+  left: -6px;
   border-right: none;
   border-top: none;
 }
 
 .bv-frame-bracket.bottom-right {
-  bottom: 8px;
-  right: 8px;
+  bottom: -6px;
+  right: -6px;
   border-left: none;
   border-top: none;
 }
 
 .bv-showcase-card:hover .bv-frame-bracket {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-color: #ef4444;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
 }
 
+/*
+ * Permanent preview frame:
+ * Full product banner always visible via object-fit: contain.
+ * Cover is forbidden here — it always slices wide landings.
+ */
 .bv-showcase-visual {
   position: relative;
-  aspect-ratio: 16 / 11;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding: 32px;
+  min-height: 300px;
+  aspect-ratio: 16 / 9;
+  display: block;
+  padding: 0;
   overflow: hidden;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: #05070c;
+  isolation: isolate;
+}
+
+/* Soft ambient fill behind the real shot (allowed to crop) */
+.bv-showcase-bg-fill {
+  position: absolute;
+  inset: -14%;
+  width: 128%;
+  height: 128%;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(32px) saturate(1.08) brightness(0.52);
+  transform: scale(1.05);
+  opacity: 0.95;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Product shot — edge-to-edge, no padding */
+.bv-showcase-shot {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .bv-showcase-bg-img {
-  position: absolute;
-  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  opacity: 0.6;
-  mix-blend-mode: overlay;
-  transition: transform 0.5s ease, opacity 0.5s ease;
+  object-fit: contain;
+  object-position: center center;
+  opacity: 1;
+  mix-blend-mode: normal;
+  filter: none;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bv-showcase-card:hover .bv-showcase-bg-img {
-  transform: scale(1.05);
-  opacity: 0.85;
+  transform: scale(1.02);
+  opacity: 1;
+  filter: none;
 }
 
-.bv-showcase-visual-overlay {
+.bv-showcase-visual-overlay,
+.bv-showcase-visual-content,
+.bv-showcase-num {
+  display: none !important;
+}
+
+/* Graceful fallback when no screenshot exists */
+.bv-showcase-no-preview {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(13, 17, 23, 0.9) 0%, transparent 60%);
-  z-index: 0;
-}
-
-.bv-showcase-visual-content {
-  position: relative;
-  z-index: 2;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background:
+    linear-gradient(135deg, rgba(239, 68, 68, 0.06) 0%, transparent 50%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 24px,
+      rgba(255, 255, 255, 0.02) 24px,
+      rgba(255, 255, 255, 0.02) 25px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 24px,
+      rgba(255, 255, 255, 0.02) 24px,
+      rgba(255, 255, 255, 0.02) 25px
+    );
 }
 
-.bv-showcase-num {
+.bv-showcase-no-preview-icon {
+  font-size: 40px;
+  opacity: 0.6;
+  filter: grayscale(0.3);
+}
+
+.bv-showcase-no-preview-label {
+  font-size: 11px;
   font-family: var(--bv-mono);
-  font-size: 64px;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.08);
-  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 4px;
 }
 
 .bv-showcase-tech-cloud {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin: 2px 0 4px;
 }
 
 .bv-showcase-tech-pill {
   font-size: 10px;
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 4px;
-  background: rgba(13, 17, 23, 0.8);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.82);
   font-family: var(--bv-mono);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
-  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: border-color 0.2s ease, background 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .bv-showcase-card:hover .bv-showcase-tech-pill {
-  border-color: rgba(239, 68, 68, 0.8);
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
 }
 
+.bv-showcase-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.bv-showcase-actions .bv-btn {
+  text-decoration: none !important;
+}
+
+/* Solid primary CTA — readable (overrides XP theme link blue) */
+.bv-showcase-actions .bv-btn-glow,
+a.bv-btn-glow {
+  background: #ef4444 !important;
+  border: 1px solid #f87171 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.28);
+}
+
+.bv-showcase-actions .bv-btn-glow:hover,
+a.bv-btn-glow:hover {
+  background: #f87171 !important;
+  border-color: #fca5a5 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 28px rgba(239, 68, 68, 0.4);
+}
+
+.bv-showcase-actions .bv-btn-glow .btn-content,
+.bv-showcase-actions .bv-btn-glow .btn-arrow,
+a.bv-btn-glow .btn-content,
+a.bv-btn-glow .btn-arrow {
+  color: #ffffff !important;
+}
+
+/* Ghost secondary — quieter than primary glow */
+.bv-showcase-actions .bv-btn-ghost {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  text-decoration: none !important;
+}
+
+.bv-showcase-actions .bv-btn-ghost:hover {
+  border-color: rgba(239, 68, 68, 0.55) !important;
+  color: #fff !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Kill decorative grid wash that muddied screenshots */
 .bv-showcase-grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 24px 24px;
-  pointer-events: none;
+  display: none;
 }
 
 .bv-showcase-info {
-  padding: 32px 32px 32px 0;
+  padding: 28px 28px 28px 24px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  justify-content: center;
+  min-width: 0;
 }
 
 .bv-showcase-title {
@@ -1011,7 +1138,7 @@
   font-size: 14px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.75);
-  margin: 0 0 16px 0;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -1021,28 +1148,30 @@
 .bv-btn-glow {
   align-self: flex-start;
   position: relative;
-  padding: 10px 24px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #fff;
+  padding: 11px 22px;
+  background: #ef4444;
+  border: 1px solid #f87171;
+  color: #ffffff;
   font-size: 13px;
   font-family: var(--bv-mono);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   overflow: hidden;
-  transition: all 0.3s ease;
-  display: flex;
+  transition: all 0.25s ease;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
+  text-decoration: none;
 }
 
 .bv-btn-glow:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: #ef4444;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  background: #f87171;
+  border-color: #fca5a5;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(239, 68, 68, 0.35);
 }
 
 .bv-btn-glow .btn-arrow {
@@ -1050,7 +1179,7 @@
 }
 
 .bv-btn-glow:hover .btn-arrow {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 .bv-showcase-arrow {
@@ -1145,8 +1274,19 @@
     grid-template-columns: 1fr;
   }
 
+  .bv-showcase-visual {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    min-height: 200px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .bv-showcase-shot {
+    inset: 10px;
+  }
+
   .bv-showcase-info {
-    padding: 24px;
+    padding: 20px 18px 22px;
   }
 }
 

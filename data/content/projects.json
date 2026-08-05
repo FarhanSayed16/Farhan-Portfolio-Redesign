@@ -9,7 +9,7 @@
     "problem": "Lack of standardized disaster education and real-time response drills in educational institutions.",
     "solution": "Architected IoT sensor integration ESP32 feeding live dashboards; led end-to-end system design aligned with government disaster management frameworks for real-world deployment.",
     "impact": "Deployed as a scalable national platform for disaster readiness.",
-    "image": "/images/projects/govbuy.png",
+    "image": "/images/projects/placeholder.svg",
     "media": [],
     "tech": [
       "Next.js",
@@ -25,9 +25,14 @@
     ],
     "repoUrl": null,
     "demoUrl": null,
-    "category": "web",
+    "category": "platforms",
     "featured": true,
-    "archived": false
+    "archived": false,
+    "folders": [
+      "platforms",
+      "hardware",
+      "ai"
+    ]
   },
   {
     "id": "govbuy",
@@ -39,18 +44,25 @@
     "problem": "Government tendering lacked an auditable, transparent digital workflow aligned with global enterprise architectures.",
     "solution": "Designed following TOGAF ADM and ArchiMate modelling to deliver an enterprise-grade, auditable system built for secure, scalable government procurement operations.",
     "impact": "International finalist at The Open Group INITIATE EA Competition.",
-    "image": "/images/projects/govbuy.png",
-    "media": [],
+    "image": "/images/projects/govbuy-hero.webp",
+    "media": [
+      "/images/projects/govbuy-m1.webp",
+      "/images/projects/govbuy-m2.webp",
+      "/images/projects/govbuy-m3.webp"
+    ],
     "tech": [
       "MERN Stack",
       "TOGAF ADM",
       "ArchiMate"
     ],
     "repoUrl": null,
-    "demoUrl": null,
+    "demoUrl": "https://govbuy.vercel.app/",
     "category": "web",
-    "featured": true,
-    "archived": false
+    "featured": false,
+    "archived": false,
+    "folders": [
+      "web"
+    ]
   },
   {
     "id": "nagarsevak",
@@ -62,8 +74,12 @@
     "problem": "Lack of transparent, AI-driven issue reporting for citizens and municipal authorities.",
     "solution": "Integrated YOLO-based image analysis and a trust-based prioritization engine; authorities access a real-time WebSocket-powered map dashboard with auto-routing and issue resolution tracking.",
     "impact": "Empowered citizens and streamlined civic governance workflows.",
-    "image": "/images/projects/ai.png",
-    "media": [],
+    "image": "/images/projects/nagarsevak-hero.webp",
+    "media": [
+      "/images/projects/nagarsevak-m1.webp",
+      "/images/projects/nagarsevak-m2.webp",
+      "/images/projects/nagarsevak-m3.webp"
+    ],
     "tech": [
       "Flutter",
       "React.js",
@@ -74,10 +90,14 @@
       "WebSockets"
     ],
     "repoUrl": null,
-    "demoUrl": null,
-    "category": "ai",
+    "demoUrl": "https://civic-issue-reporter-ten.vercel.app/",
+    "category": "platforms",
     "featured": true,
-    "archived": false
+    "archived": false,
+    "folders": [
+      "platforms",
+      "ai"
+    ]
   },
   {
     "id": "cybersentinel",
@@ -89,8 +109,12 @@
     "problem": "Users fall victim to phishing and malicious web attacks due to a lack of real-time, explainable threat detection.",
     "solution": "Developed an AI-powered threat analysis pipeline with explainable insights (risk scoring, indicators, actions).",
     "impact": "Provides real-time explainable defense against zero-day phishing and prompt injections.",
-    "image": "/images/projects/ai.png",
-    "media": [],
+    "image": "/images/projects/cybersentinel-hero.webp",
+    "media": [
+      "/images/projects/cybersentinel-m1.webp",
+      "/images/projects/cybersentinel-m2.webp",
+      "/images/projects/cybersentinel-m3.webp"
+    ],
     "tech": [
       "React.js",
       "FastAPI",
@@ -102,10 +126,261 @@
       "WebSockets"
     ],
     "repoUrl": null,
-    "demoUrl": null,
+    "demoUrl": "https://cybershieldaicybersentinal.vercel.app/",
     "category": "ai",
     "featured": true,
-    "archived": false
+    "archived": false,
+    "folders": [
+      "ai",
+      "web"
+    ]
+  },
+  {
+    "id": "knoq",
+    "title": "KnoQ Smart Bat",
+    "tagline": "AI Cricket Coaching System",
+    "role": "Hardware + Software Lead",
+    "award": null,
+    "shortDescription": "IoT-enabled cricket training system capturing real-time swing metrics (speed, impact, sweet spot) with BLE-based mobile integration.",
+    "problem": "Lack of data-driven technique feedback for amateur cricketers.",
+    "solution": "Designed MediaPipe-based vision analysis to deliver AI-driven technique feedback and player performance tracking.",
+    "impact": "Revolutionizing local cricket coaching through affordable IoT and AI.",
+    "image": "/images/projects/knoq-hero.png",
+    "media": [
+      "/images/projects/knoq-m1.webp",
+      "/images/projects/knoq-m2.webp",
+      "/images/projects/knoq-m3.webp"
+    ],
+    "tech": [
+      "Flutter",
+      "MediaPipe",
+      "Firebase",
+      "Python",
+      "BLE",
+      "Embedded sensors",
+      "ESP32"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://smart-cricket-bat.vercel.app/",
+    "category": "hardware",
+    "featured": true,
+    "archived": false,
+    "folders": [
+      "hardware",
+      "platforms",
+      "ai"
+    ]
+  },
+  {
+    "id": "robotic-garbage",
+    "title": "EcoSweep — Robotic Garbage Collector",
+    "tagline": "Terrain-adaptive cleaning robot",
+    "role": "Team Lead",
+    "award": "Final Year Project",
+    "shortDescription": "A semi-autonomous terrain-adaptive garbage collection robot (sandy/swampy environments) with real-time object detection, servo control, and obstacle avoidance.",
+    "problem": "Standard cleaning robots fail in uneven terrain like swamps and sand.",
+    "solution": "Built a Flutter app for manual remote control alongside the robot's fully automatic operation mode.",
+    "impact": "Efficient terrain-adaptive cleaning.",
+    "image": "/images/projects/robotic-garbage-hero.webp",
+    "media": [
+      "/images/projects/robotic-garbage-m1.webp",
+      "/images/projects/robotic-garbage-m2.webp",
+      "/images/projects/robotic-garbage-m3.webp"
+    ],
+    "tech": [
+      "Arduino Mega",
+      "ESP32",
+      "Raspberry Pi",
+      "Python",
+      "Flutter"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://ecosweep-robot.netlify.app/",
+    "category": "hardware",
+    "featured": false,
+    "archived": false,
+    "folders": [
+      "hardware"
+    ]
+  },
+  {
+    "id": "ayush",
+    "title": "AYUSH Startup Registration Portal",
+    "tagline": "Streamlining Startup Onboarding",
+    "role": "Full Stack Developer",
+    "award": "SIH 2024 – Top 2 Finalist",
+    "shortDescription": "A government-facing portal streamlining AYUSH startup onboarding with role-based access, data aggregation, user authentication, and privacy compliance built in.",
+    "problem": "AYUSH startups faced fragmented onboarding and opaque licensing workflows.",
+    "solution": "Built a multi-role portal with secure auth, startup registries, service discovery across Ayurveda/Siddha/Unani systems, and compliance-aware data handling.",
+    "impact": "Simplified discovery and registration for traditional-medicine startups.",
+    "image": "/images/projects/ayush-hero.webp",
+    "media": [
+      "/images/projects/ayush-m1.webp",
+      "/images/projects/ayush-m2.webp",
+      "/images/projects/ayush-m3.webp"
+    ],
+    "tech": [
+      "MERN Stack",
+      "Python"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://ayush-startup-frontend-chi.vercel.app",
+    "category": "web",
+    "featured": false,
+    "archived": false,
+    "folders": [
+      "web"
+    ]
+  },
+  {
+    "id": "billpush",
+    "title": "BillPush",
+    "tagline": "Multi-store billing & business dashboard",
+    "role": "Full Stack Developer",
+    "award": null,
+    "shortDescription": "Mobile-first billing platform for multi-store businesses — live revenue trends, approvals, store ops, and customer metrics in one dashboard.",
+    "problem": "Small multi-outlet businesses track sales across mess of tools and paper bills.",
+    "solution": "Designed a Flutter-style ops app with real-time revenue graphs, store inventory, approval workflows, and customer analytics.",
+    "impact": "One place to run day-to-day retail billing and oversight.",
+    "image": "/images/projects/billpush-hero.webp",
+    "media": [
+      "/images/projects/billpush-m1.webp",
+      "/images/projects/billpush-m2.webp",
+      "/images/projects/billpush-m3.webp"
+    ],
+    "tech": [
+      "Mobile",
+      "Node.js",
+      "Firebase"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://billpush.netlify.app/",
+    "category": "platforms",
+    "featured": false,
+    "archived": false,
+    "folders": [
+      "platforms"
+    ]
+  },
+  {
+    "id": "momoza",
+    "title": "Momoza",
+    "tagline": "Restaurant branding & ordering site",
+    "role": "Freelance Frontend Developer",
+    "award": null,
+    "shortDescription": "Freelance client site for a homemade momo brand — dark culinary landing, menu storytelling, and WhatsApp-led ordering UX.",
+    "problem": "Local food brand needed a polished web presence that feels premium without a heavy CMS.",
+    "solution": "Built a fast Next.js marketing site with rich food photography, about/menu sections, and frictionless contact via WhatsApp CTA.",
+    "impact": "Client-ready brand site for orders and discovery.",
+    "image": "/images/projects/momoza-hero.webp",
+    "media": [
+      "/images/projects/momoza-m1.webp",
+      "/images/projects/momoza-m2.webp",
+      "/images/projects/momoza-m3.webp"
+    ],
+    "tech": [
+      "Next.js",
+      "React",
+      "Tailwind CSS"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://momoza-website.vercel.app/",
+    "category": "web",
+    "featured": false,
+    "archived": false,
+    "folders": [
+      "web"
+    ]
+  },
+  {
+    "id": "leatherafiya",
+    "title": "Afiya Leathers",
+    "tagline": "Luxury leather e-commerce storefront",
+    "role": "Freelance Frontend Developer",
+    "award": null,
+    "shortDescription": "Premium e-commerce storefront for a leather goods brand — hero merchandising, category nav, and collection-led shopping UI.",
+    "problem": "Brand needed a luxury digital storefront matching product quality.",
+    "solution": "Designed a warm, product-forward shop experience with clear hierarchy, promo bar, and collection CTAs.",
+    "impact": "Production-ready brand commerce frontend.",
+    "image": "/images/projects/leatherafiya-hero.webp",
+    "media": [
+      "/images/projects/leatherafiya-m1.webp",
+      "/images/projects/leatherafiya-m2.webp",
+      "/images/projects/leatherafiya-m3.webp"
+    ],
+    "tech": [
+      "Next.js",
+      "React",
+      "E-commerce UI"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://leathers-brand-frontend.vercel.app/",
+    "category": "web",
+    "featured": true,
+    "archived": false,
+    "folders": [
+      "web"
+    ]
+  },
+  {
+    "id": "dudedice",
+    "title": "DudeDice",
+    "tagline": "Streetwear e-commerce brand",
+    "role": "Freelance / Product Developer",
+    "award": null,
+    "shortDescription": "Streetwear e-commerce experience — oversized fashion merchandising, promo tickers, and conversion-focused landing.",
+    "problem": "Emerging streetwear brand needed a storefront that feels cultural, not generic.",
+    "solution": "Shipped a high-contrast brand site with hero campaign imagery, collection flows, and retail trust signals (shipping, COD, returns).",
+    "impact": "Live storefront at dudedice.com.",
+    "image": "/images/projects/dudedice-hero.webp",
+    "media": [
+      "/images/projects/dudedice-m1.webp",
+      "/images/projects/dudedice-m2.webp"
+    ],
+    "tech": [
+      "Next.js",
+      "React",
+      "E-commerce"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://www.dudedice.com/",
+    "category": "web",
+    "featured": false,
+    "archived": false,
+    "folders": [
+      "web"
+    ]
+  },
+  {
+    "id": "shiv-science",
+    "title": "Shiv Science Classes",
+    "tagline": "Academy admin + student AI ops",
+    "role": "Freelance Full Stack Developer",
+    "award": null,
+    "shortDescription": "Operations platform for a multi-branch science academy — admin command center, student/batch management, quizzes, and mobile companion workflows.",
+    "problem": "Coaching institutes juggle students, branches, enquiries, and exams across spreadsheets.",
+    "solution": "Built admin dashboards and mobile flows for students, batches, enquiries, teachers, and growth analytics across branches.",
+    "impact": "Centralized day-to-day academy operations for Shiv Science Classes.",
+    "image": "/images/projects/shiv-science-hero.webp",
+    "media": [
+      "/images/projects/shiv-science-m1.webp",
+      "/images/projects/shiv-science-m2.webp",
+      "/images/projects/shiv-science-m3.webp"
+    ],
+    "tech": [
+      "React",
+      "Node.js",
+      "Mobile app",
+      "Admin dashboard"
+    ],
+    "repoUrl": null,
+    "demoUrl": "https://shiv-cdc-ai-app.vercel.app/login",
+    "category": "platforms",
+    "featured": false,
+    "archived": false,
+    "folders": [
+      "platforms"
+    ]
   },
   {
     "id": "jalsevak",
@@ -134,81 +409,11 @@
     "demoUrl": null,
     "category": "ai",
     "featured": false,
-    "archived": true
-  },
-  {
-    "id": "ayush",
-    "title": "AYUSH Startup Registration Portal",
-    "tagline": "Streamlining Startup Onboarding",
-    "role": "Full Stack Developer",
-    "award": "SIH 2024 – Top 2 Finalist",
-    "shortDescription": "A government-facing portal streamlining AYUSH startup onboarding with role-based access, data aggregation, user authentication, and privacy compliance built in.",
-    "problem": null,
-    "solution": null,
-    "impact": null,
-    "image": "/images/projects/placeholder.svg",
-    "media": [],
-    "tech": [
-      "MERN Stack",
-      "Python"
-    ],
-    "repoUrl": null,
-    "demoUrl": null,
-    "category": "web",
-    "featured": false,
-    "archived": true
-  },
-  {
-    "id": "robotic-garbage",
-    "title": "Robotic Garbage Collector",
-    "tagline": "Terrain-adaptive cleaning robot",
-    "role": "Team Lead",
-    "award": "Final Year Project",
-    "shortDescription": "A semi-autonomous terrain-adaptive garbage collection robot (sandy/swampy environments) with real-time object detection, servo control, and obstacle avoidance.",
-    "problem": "Standard cleaning robots fail in uneven terrain like swamps and sand.",
-    "solution": "Built a Flutter app for manual remote control alongside the robot's fully automatic operation mode.",
-    "impact": "Efficient terrain-adaptive cleaning.",
-    "image": "/images/projects/ecosweep-hero.svg",
-    "media": [],
-    "tech": [
-      "Arduino Mega",
-      "ESP32",
-      "Raspberry Pi",
-      "Python",
-      "Flutter"
-    ],
-    "repoUrl": null,
-    "demoUrl": null,
-    "category": "robotics",
-    "featured": true,
-    "archived": false
-  },
-  {
-    "id": "knoq",
-    "title": "KnoQ Smart Bat",
-    "tagline": "AI Cricket Coaching System",
-    "role": "Hardware + Software Lead",
-    "award": null,
-    "shortDescription": "IoT-enabled cricket training system capturing real-time swing metrics (speed, impact, sweet spot) with BLE-based mobile integration.",
-    "problem": "Lack of data-driven technique feedback for amateur cricketers.",
-    "solution": "Designed MediaPipe-based vision analysis to deliver AI-driven technique feedback and player performance tracking.",
-    "impact": "Revolutionizing local cricket coaching through affordable IoT and AI.",
-    "image": "/images/projects/placeholder.svg",
-    "media": [],
-    "tech": [
-      "Flutter",
-      "MediaPipe",
-      "Firebase",
-      "Python",
-      "BLE",
-      "Embedded sensors",
-      "ESP32"
-    ],
-    "repoUrl": null,
-    "demoUrl": null,
-    "category": "robotics",
-    "featured": true,
-    "archived": false
+    "archived": true,
+    "folders": [
+      "ai",
+      "platforms"
+    ]
   },
   {
     "id": "mediscan",
@@ -232,6 +437,9 @@
     "demoUrl": null,
     "category": "web",
     "featured": false,
-    "archived": true
+    "archived": true,
+    "folders": [
+      "web"
+    ]
   }
 ]

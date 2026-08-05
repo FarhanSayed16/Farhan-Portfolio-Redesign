@@ -43,7 +43,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ['192.168.0.101'],
+  allowedDevOrigins: ['192.168.0.101', '192.168.0.105'],
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   async headers() {

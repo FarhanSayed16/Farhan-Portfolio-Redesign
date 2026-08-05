@@ -39,8 +39,8 @@ import ContactForm from '@/components/shared/ContactForm';
 interface ModernSiteProps {
   /** Desktop IE only — hidden on mobile standalone (no Time Machine on phones). */
   onReplayEras?: () => void;
-  /** Desktop: open Projects window. Standalone: falls back to in-page scroll. */
-  onOpenProjects?: () => void;
+  /** Desktop: open Projects explorer (optionally focused). Standalone: unused. */
+  onOpenProjects?: (projectId?: string) => void;
   /** Desktop: open Contact window. Standalone: falls back to #bv-contact. */
   onOpenContact?: () => void;
   /** Full-page mobile portfolio (not inside XP browser). */
@@ -225,8 +225,8 @@ export function ModernSite({
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const openProjects = () => {
-    if (onOpenProjects) onOpenProjects();
+  const openProjects = (projectId?: string) => {
+    if (onOpenProjects) onOpenProjects(projectId);
     else scrollTo('bv-work');
   };
 
@@ -420,7 +420,14 @@ export function ModernSite({
         </>
       )}
 
-      <ProjectShowcase projects={featured} openProjects={openProjects} />
+      <ProjectShowcase
+        projects={featured}
+        onOpenCaseStudy={
+          onOpenProjects
+            ? (id) => openProjects(id)
+            : undefined
+        }
+      />
 
       <LaserDivider color="#ef4444" />
 
