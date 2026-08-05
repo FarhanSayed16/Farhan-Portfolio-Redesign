@@ -46,38 +46,64 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://farhanbuilds.in'),
-  title: `${siteJson.name} — ${siteJson.tagline}`,
+  title: {
+    default: `${siteJson.name} — AI & Full-Stack Engineer | SIH 2025 Winner`,
+    template: `%s · ${siteJson.name}`,
+  },
   description: siteJson.metaDescription,
   keywords: [
     'Farhan Sayed',
-    'Full Stack Developer',
-    'AI Developer',
+    'Farhan Builds',
+    'farhanbuilds',
+    'sayed farhan',
+    'Farhan Sayed Mumbai',
+    'AI Full Stack Engineer',
+    'Full Stack Developer Mumbai',
+    'Smart India Hackathon 2025 Winner',
+    'SIH 2025',
+    'Robotics Developer',
+    'Government platforms',
+    'Next.js Developer',
     'Portfolio',
-    'Smart India Hackathon',
-    'Mumbai',
   ],
-  authors: [{ name: siteJson.name }],
+  authors: [{ name: siteJson.name, url: 'https://farhanbuilds.in' }],
+  creator: siteJson.name,
+  publisher: siteJson.name,
+  category: 'technology',
+  alternates: {
+    canonical: 'https://farhanbuilds.in',
+  },
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'en_IN',
     url: 'https://farhanbuilds.in',
-    siteName: "Farhan OS",
-    title: `${siteJson.name} — ${siteJson.tagline}`,
+    siteName: 'farhanbuilds.in',
+    title: `${siteJson.name} — AI & Full-Stack Engineer · SIH 2025 Winner`,
     description: siteJson.metaDescription,
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: `${siteJson.name} — Portfolio`,
+        url: siteJson.profileImage,
+        width: 800,
+        height: 1000,
+        alt: `${siteJson.name} — AI & Full-Stack Engineer, Mumbai`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${siteJson.name} — ${siteJson.tagline}`,
+    title: `${siteJson.name} — AI & Full-Stack Engineer · SIH 2025 Winner`,
     description: siteJson.metaDescription,
-    images: ['/og-image.png'],
+    images: [siteJson.profileImage],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
@@ -98,14 +124,22 @@ export default function RootLayout({
         {children}
         <SecurityClient />
         <noscript>
-          <div className="md:hidden flex flex-col items-center justify-center min-h-screen bg-[#008080] text-white p-6 text-center">
-            <h1 className="text-2xl font-bold mb-4 font-os">Farhan OS</h1>
-            <p>AI & FULL-STACK ENGINEER — Mumbai, India</p>
-            <p>Smart India Hackathon 2025 Winner • 11 Projects • 35+ Certifications</p>
+          <div style={{ maxWidth: 640, margin: '2rem auto', padding: '1.5rem', fontFamily: 'system-ui, sans-serif', lineHeight: 1.5 }}>
+            <h1>Farhan Sayed</h1>
+            <p>AI &amp; Full-Stack Engineer — Mumbai, India · Smart India Hackathon 2025 National Winner</p>
+            <p>{siteJson.metaDescription}</p>
             <p>
-              <a href="/resume.pdf">Download Resume</a> |{' '}
-              <a href="mailto:farhanbuilds16@gmail.com">Contact</a>
+              <a href="/resume.pdf">Resume (PDF)</a>
+              {' · '}
+              <a href={`mailto:${siteJson.socialLinks.email}`}>Email</a>
+              {' · '}
+              <a href={siteJson.socialLinks.linkedin}>LinkedIn</a>
+              {' · '}
+              <a href={siteJson.socialLinks.github}>GitHub</a>
+              {' · '}
+              <a href="/connectQR">Connect card</a>
             </p>
+            <p>Enable JavaScript for the interactive Farhan OS portfolio experience.</p>
           </div>
         </noscript>
       </body>

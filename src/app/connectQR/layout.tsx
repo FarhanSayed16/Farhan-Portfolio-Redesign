@@ -10,9 +10,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Farhan Sayed — Connect',
+  title: 'Connect',
   description:
-    'Connect with Farhan Sayed — AI & Full-Stack Engineer · SIH 2025 National Winner · Mumbai. LinkedIn, GitHub, resume, and portfolio.',
+    'Connect with Farhan Sayed (Farhan Builds) — AI & Full-Stack Engineer · SIH 2025 National Winner · Mumbai. LinkedIn, GitHub, resume, portfolio.',
+  alternates: {
+    canonical: 'https://farhanbuilds.in/connectQR',
+  },
   openGraph: {
     title: 'Farhan Sayed — Connect',
     description:
