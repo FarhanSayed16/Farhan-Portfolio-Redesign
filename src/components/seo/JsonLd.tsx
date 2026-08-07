@@ -20,6 +20,8 @@ export default function JsonLd() {
         description: siteData.metaDescription,
         inLanguage: 'en-IN',
         publisher: { '@id': `${SITE_URL}/#person` },
+        // Brand mark used by some surfaces (distinct from Person portrait)
+        image: `${SITE_URL}/icon-512.png`,
       },
       {
         '@type': 'Person',
