@@ -6,7 +6,7 @@ import { Fireball, hitEnemyWithFireball } from '../sprites/Fireball';
 import { spawnBlockCoin, spawnScorePopup } from '../sprites/Coin';
 import { isStomp } from '../gameplay/combat';
 import { gameBridge } from '@/lib/GameBridge';
-import { portfolioData } from '@/lib/portfolioData';
+import { drawGameSkill, portfolioData } from '@/lib/portfolioData';
 import type { SFXSynth } from '@/lib/SFXSynth';
 
 type LevelHost = Phaser.Scene & {
@@ -144,7 +144,7 @@ export function handleQBlockHit(host: LevelHost, player: Player, tile: Phaser.Ti
   }
 
   // Toast only — game keeps running (no pause / OK click).
-  const skill = portfolioData.skills[Math.floor(Math.random() * portfolioData.skills.length)];
-  gameBridge.emit('show-overlay', { type: 'skill', text: skill });
+  // Draw without replacement so successive hits show different high-impact stacks.
+  gameBridge.emit('show-overlay', { type: 'skill', text: drawGameSkill() });
   return true;
 }
