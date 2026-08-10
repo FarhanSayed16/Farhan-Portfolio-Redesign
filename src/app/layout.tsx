@@ -105,17 +105,18 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  // Favicons: src/app/favicon.ico + icon.png + apple-icon.png (App Router).
+  // public/* copies remain for Google/direct requests to /favicon-48.png etc.
+  // Cache-bump query so crawlers that stick to old Vercel triangle re-fetch.
   icons: {
-    // Official FS brand mark — gold monogram (see public/images/brand/fs-logo.png)
     icon: [
-      { url: '/favicon.ico', sizes: '16x16 32x32 48x48' },
-      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-48.png', sizes: '48x48', type: 'image/png' },
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-48.png?v=fs-brand-1', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-32.png?v=fs-brand-1', sizes: '32x32', type: 'image/png' },
+      { url: '/icon-192.png?v=fs-brand-1', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.ico?v=fs-brand-1', sizes: 'any' },
     ],
-    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
-    shortcut: ['/favicon.ico'],
+    apple: [{ url: '/apple-touch-icon.png?v=fs-brand-1', sizes: '180x180', type: 'image/png' }],
+    shortcut: ['/favicon.ico?v=fs-brand-1'],
   },
   manifest: '/site.webmanifest',
 };

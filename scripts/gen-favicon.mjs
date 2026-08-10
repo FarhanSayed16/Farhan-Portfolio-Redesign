@@ -12,6 +12,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 const brandPath = join(root, 'public', 'images', 'brand', 'fs-logo.png');
 const outDir = join(root, 'public');
+// Next.js App Router prefers src/app/favicon.ico over public/ — must stay in sync
+const appDir = join(root, 'src', 'app');
 
 // Solid black — gold mark needs contrast in Google's light SERP / tab chips
 const BLACK = { r: 0, g: 0, b: 0, alpha: 1 };
@@ -84,7 +86,8 @@ for (const { size, name, pad } of sizes) {
 
 const ico = icoFromPngs(icoParts);
 writeFileSync(join(outDir, 'favicon.ico'), ico);
-console.log('wrote favicon.ico', ico.length);
+writeFileSync(join(appDir, 'favicon.ico'), ico);
+console.log('wrote public/favicon.ico + src/app/favicon.ico', ico.length);
 
 // SVG wrapper (browsers that prefer vector still get the official mark)
 const master512 = await png(512, 'icon-512.png', { pad: 0.05 });
@@ -112,3 +115,10 @@ const manifest = {
 };
 writeFileSync(join(outDir, 'site.webmanifest'), JSON.stringify(manifest, null, 2));
 console.log('wrote site.webmanifest');
+
+// App Router metadata files (these override the create-next-app Vercel triangle)
+const icon192 = readFileSync(join(outDir, 'icon-192.png'));
+const apple = readFileSync(join(outDir, 'apple-touch-icon.png'));
+writeFileSync(join(appDir, 'icon.png'), icon192);
+writeFileSync(join(appDir, 'apple-icon.png'), apple);
+console.log('wrote src/app/icon.png + src/app/apple-icon.png');
