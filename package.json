@@ -12,7 +12,8 @@
     "gen:game-assets": "node scripts/final-crop-originals.mjs",
     "check:game": "node scripts/check-game-sprites.mjs && node scripts/check-level-geometry.mjs",
     "preview:level": "node scripts/preview-level.mjs",
-    "gen:favicon": "node scripts/gen-favicon.mjs"
+    "gen:favicon": "node scripts/gen-favicon.mjs",
+    "gen:portrait-square": "node scripts/gen-portrait-square.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.42.2",

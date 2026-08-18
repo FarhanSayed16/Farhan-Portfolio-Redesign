@@ -100,6 +100,105 @@ body.mps-unlocked {
   transform: scale(0.97);
 }
 
+.mps-mode-root {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.mps-mode-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+}
+
+.mps-mode-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 8px calc(8px + env(safe-area-inset-bottom, 0px));
+  padding: 18px 16px 14px;
+  border-radius: 16px 16px 12px 12px;
+  background: #121214;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.55);
+  color: #f6f1e7;
+  font-family: var(--bv-font, 'Inter', -apple-system, sans-serif);
+}
+
+.mps-mode-sheet h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mps-mode-lead {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(246, 241, 231, 0.72);
+}
+
+.mps-mode-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.mps-mode-choice--primary {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.mps-mode-choice-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f87171;
+}
+
+.mps-mode-choice-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(246, 241, 231, 0.55);
+}
+
+.mps-mode-cancel {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: rgba(246, 241, 231, 0.55);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .footer-standalone-hint {
   font-size: 11px;
   opacity: 0.5;
@@ -338,8 +437,8 @@ body.mps-unlocked {
 }
 
 .bv-modern-viewport--standalone .bv-portrait-img {
-  object-position: 30% 16%;
-  transform: scale(1.08);
+  object-position: 47% 40%;
+  transform: scale(1.04);
 }
 
 /* Compact pill on the photo — now outside the clipped frame, relative to .bv-portrait-card */

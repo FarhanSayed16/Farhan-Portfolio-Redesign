@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     siteName: 'farhanbuilds.in',
     images: [
       {
-        url: '/images/farhan.jpeg',
-        width: 800,
-        height: 1000,
+        url: '/images/farhan-square.jpg',
+        width: 1200,
+        height: 1200,
         alt: 'Farhan Sayed',
       },
     ],
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary',
     title: 'Farhan Sayed — Connect',
     description: 'AI & Full-Stack Engineer · SIH 2025 National Winner · Mumbai.',
-    images: ['/images/farhan.jpeg'],
+    images: ['/images/farhan-square.jpg'],
   },
   robots: { index: true, follow: true },
 };

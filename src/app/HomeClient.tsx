@@ -12,7 +12,7 @@ import ModernPortfolioShell from '@/components/mobile/ModernPortfolioShell';
 
 /**
  * Interactive shell — desktop Farhan OS · phone modern portfolio.
- * Nokia easter egg: /?view=nokia on phone/tablet-mobile.
+ * Phone extras: /?view=nokia (handset) · /?view=desktop (XP preview).
  * Crawlable copy lives in the server page sibling (SeoContent).
  */
 export default function HomeClient() {
@@ -26,19 +26,29 @@ export default function HomeClient() {
 function HomeInner() {
   const deviceMode = useDeviceMode();
   const searchParams = useSearchParams();
-  const nokiaEgg = searchParams.get('view') === 'nokia';
+  const view = searchParams.get('view');
+  const nokiaEgg = view === 'nokia';
+  const desktopPreview = view === 'desktop';
   const [tabletPreference, , prefHydrated] = useLocalStorage<DeviceMode | null>(
     'farhan-device-preference',
     null
   );
   const [chosenMode, setChosenMode] = useState<'desktop' | 'mobile' | null>(null);
 
-  if (deviceMode === null || (deviceMode === 'tablet' && !prefHydrated && !chosenMode)) {
+  if (deviceMode === null) {
     return <BootSplash />;
   }
 
   if (deviceMode === 'desktop') {
     return <DesktopShell />;
+  }
+
+  if (desktopPreview) {
+    return <DesktopShell mobileExit />;
+  }
+
+  if (deviceMode === 'tablet' && !prefHydrated && !chosenMode && !nokiaEgg) {
+    return <BootSplash />;
   }
 
   if (deviceMode === 'mobile') {

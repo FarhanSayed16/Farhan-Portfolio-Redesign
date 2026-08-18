@@ -121,4 +121,5 @@ const icon192 = readFileSync(join(outDir, 'icon-192.png'));
 const apple = readFileSync(join(outDir, 'apple-touch-icon.png'));
 writeFileSync(join(appDir, 'icon.png'), icon192);
 writeFileSync(join(appDir, 'apple-icon.png'), apple);
-console.log('wrote src/app/icon.png + src/app/apple-icon.png');
+writeFileSync(join(outDir, 'fs-icon-48.png'), readFileSync(join(outDir, 'favicon-48.png')));
+console.log('wrote src/app/icon.png + src/app/apple-icon.png + public/fs-icon-48.png');

@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Terminal, BriefcaseBusiness, Trophy, Mail } from 'lucide-react';
 import { ModernSite } from '@/components/desktop/windows/browser/ModernSite';
+import ExperiencePicker from './ExperiencePicker';
 import '@/components/desktop/windows/browser/browserTheme.css';
 import './modernPortfolio.css';
 
 /**
  * Mobile / tablet “portfolio site” door.
- * ModernSite only — no Time Machine eras. Nokia is an easter egg (?view=nokia).
+ * ModernSite only — no Time Machine eras.
+ * Extra builds live under Modes (Farhan OS / Nokia), not a raw Nokia jump.
  */
 const NAV = [
   { id: 'bv-work', label: 'Work', Icon: Terminal },
@@ -19,7 +20,6 @@ const NAV = [
 ];
 
 export default function ModernPortfolioShell() {
-  const router = useRouter();
   const [active, setActive] = useState<string>('bv-work');
 
   // Farhan OS locks html/body. Phone site scrolls inside .mps-root (own scrollport).
@@ -103,14 +103,7 @@ export default function ModernPortfolioShell() {
             <span>{label}</span>
           </button>
         ))}
-        <button
-          type="button"
-          className="mps-nav-egg"
-          aria-label="Try Nokia phone"
-          onClick={() => router.push('/?view=nokia')}
-        >
-          Nokia
-        </button>
+        <ExperiencePicker />
       </nav>
     </div>
   );

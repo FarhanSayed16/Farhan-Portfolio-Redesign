@@ -82,9 +82,9 @@ export const metadata: Metadata = {
     description: siteJson.metaDescription,
     images: [
       {
-        url: siteJson.profileImage,
-        width: 800,
-        height: 1000,
+        url: '/images/farhan-square.jpg',
+        width: 1200,
+        height: 1200,
         alt: `${siteJson.name} — AI & Full-Stack Engineer, Mumbai`,
       },
     ],
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `${siteJson.name} — AI & Full-Stack Engineer · SIH 2025 Winner`,
     description: siteJson.metaDescription,
-    images: [siteJson.profileImage],
+    images: ['/images/farhan-square.jpg'],
   },
   robots: {
     index: true,
@@ -110,13 +110,13 @@ export const metadata: Metadata = {
   // Cache-bump query so crawlers that stick to old Vercel triangle re-fetch.
   icons: {
     icon: [
-      { url: '/favicon-48.png?v=fs-brand-1', sizes: '48x48', type: 'image/png' },
-      { url: '/favicon-32.png?v=fs-brand-1', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-192.png?v=fs-brand-1', sizes: '192x192', type: 'image/png' },
-      { url: '/favicon.ico?v=fs-brand-1', sizes: 'any' },
+      { url: '/fs-icon-48.png?v=2', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-32.png?v=2', sizes: '32x32', type: 'image/png' },
+      { url: '/icon-192.png?v=2', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.ico?v=2', sizes: 'any' },
     ],
-    apple: [{ url: '/apple-touch-icon.png?v=fs-brand-1', sizes: '180x180', type: 'image/png' }],
-    shortcut: ['/favicon.ico?v=fs-brand-1'],
+    apple: [{ url: '/apple-touch-icon.png?v=2', sizes: '180x180', type: 'image/png' }],
+    shortcut: ['/favicon.ico?v=2'],
   },
   manifest: '/site.webmanifest',
 };
