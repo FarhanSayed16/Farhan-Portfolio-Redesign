@@ -437,8 +437,8 @@ body.mps-unlocked {
 }
 
 .bv-modern-viewport--standalone .bv-portrait-img {
-  object-position: 47% 40%;
-  transform: scale(1.04);
+  object-position: var(--portrait-x, 47%) var(--portrait-y, 40%);
+  transform: scale(var(--portrait-zoom, 1.05));
 }
 
 /* Compact pill on the photo — now outside the clipped frame, relative to .bv-portrait-card */

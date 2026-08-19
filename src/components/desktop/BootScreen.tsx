@@ -253,241 +253,68 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
         {phase === 'login' && (
           <motion.div
             key="login"
+            className="boot-login"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: '#5a7edc',
-              position: 'relative',
-              fontFamily: 'Tahoma, "Segoe UI", sans-serif',
-            }}
           >
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '100px',
-                background: 'linear-gradient(180deg, #1c3280 0%, #2954ab 100%)',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '100px',
-                background: 'linear-gradient(180deg, #4b71d6 0%, #1c3280 100%)',
-              }}
-            />
+            <div className="boot-login-bar boot-login-bar--top" />
+            <div className="boot-login-bar boot-login-bar--bot" />
+            <div className="boot-login-glow" aria-hidden />
 
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: 0,
-                right: 0,
-                height: '2px',
-                background:
-                  'linear-gradient(90deg, transparent 0%, #85a2f2 20%, #85a2f2 80%, transparent 100%)',
-                transform: 'translateY(-50%)',
-                opacity: 0.6,
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: 0,
-                right: 0,
-                height: '20px',
-                background:
-                  'linear-gradient(90deg, transparent 0%, rgba(133, 162, 242, 0.15) 20%, rgba(133, 162, 242, 0.15) 80%, transparent 100%)',
-                transform: 'translateY(-50%)',
-              }}
-            />
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                maxWidth: '800px',
-                zIndex: 1,
-              }}
-            >
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-end',
-                  paddingRight: '40px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  <span
-                    style={{
-                      fontSize: '36px',
-                      fontWeight: 700,
-                      color: '#fff',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    Farhan
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '36px',
-                      fontWeight: 400,
-                      color: '#ffb900',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    OS
-                  </span>
+            <div className="boot-login-row">
+              <div className="boot-login-brand">
+                <div className="boot-login-wordmark">
+                  <span className="boot-login-farhan">Farhan</span>
+                  <span className="boot-login-os">OS</span>
                 </div>
-                <div style={{ fontSize: '14px', color: '#e0e5f5', marginTop: '4px' }}>
-                  To begin, click your user name
-                </div>
+                <div className="boot-login-prompt">To begin, tap your user name</div>
               </div>
 
-              <div
-                style={{
-                  width: '1px',
-                  height: '180px',
-                  background: 'linear-gradient(180deg, transparent 0%, #fff 50%, transparent 100%)',
-                  opacity: 0.4,
-                }}
-              />
+              <div className="boot-login-rule" aria-hidden />
 
-              <div
-                style={{
-                  flex: 1,
-                  paddingLeft: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '16px',
-                }}
-              >
-                <div
-                  style={{
-                    width: '72px',
-                    height: '72px',
-                    background: '#fff',
-                    borderTop: '2px solid #ffb900',
-                    borderLeft: '2px solid #ffb900',
-                    borderRight: '2px solid #a67800',
-                    borderBottom: '2px solid #a67800',
-                    borderRadius: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '3px 3px 6px rgba(0,0,0,0.4)',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      border: '1px solid #000',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: '#f0f0f0',
-                    }}
-                  >
+              <div className="boot-login-user">
+                <button type="button" className="boot-login-tile" onClick={handleLogin}>
+                  <span className="boot-login-avatar">
                     <XpStartLogo size={40} />
-                  </div>
-                </div>
+                  </span>
+                  <span className="boot-login-name">{siteData.name}</span>
+                </button>
 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: 700,
-                      color: '#fff',
-                      textShadow: '1px 1px 2px rgba(0,0,0,0.6)',
-                      marginBottom: '4px',
-                    }}
+                <div className="boot-login-passrow">
+                  <input
+                    type="password"
+                    placeholder="Type your password"
+                    disabled
+                    className="boot-login-pass"
+                  />
+                  <button
+                    type="button"
+                    className="boot-login-go"
+                    onClick={handleLogin}
+                    title="Log On"
+                    aria-label="Log On"
                   >
-                    {siteData.name}
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '8px' }}>
-                    <input
-                      type="password"
-                      placeholder="Type your password"
-                      disabled
-                      style={{
-                        padding: '4px 6px',
-                        border: '1px solid #000',
-                        borderTopColor: '#808080',
-                        borderLeftColor: '#808080',
-                        borderBottomColor: '#fff',
-                        borderRightColor: '#fff',
-                        background: '#fff',
-                        fontSize: '12px',
-                        width: '160px',
-                        color: '#000',
-                        fontFamily: 'Tahoma, sans-serif',
-                        cursor: 'not-allowed',
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={handleLogin}
-                      style={{
-                        background: 'linear-gradient(180deg, #387bd5 0%, #20509a 100%)',
-                        border: '1px solid #14356a',
-                        borderRadius: '3px',
-                        width: '24px',
-                        height: '24px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        boxShadow:
-                          'inset 1px 1px 1px rgba(255,255,255,0.4), 1px 1px 2px rgba(0,0,0,0.3)',
-                      }}
-                      title="Log On"
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="4"
+                      strokeLinecap="square"
+                      aria-hidden
                     >
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="white"
-                        strokeWidth="4"
-                        strokeLinecap="square"
-                      >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '11px',
-                      color: '#c0c8e0',
-                      marginTop: '8px',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    AI & FULL-STACK ENGINEER
-                  </div>
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                    <span className="boot-login-go-label">Log On</span>
+                  </button>
                 </div>
+                <div className="boot-login-role">AI & FULL-STACK ENGINEER</div>
               </div>
             </div>
 
             <div
+              className="boot-login-shutdown"
               onClick={handleShutdownClick}
               role="button"
               tabIndex={0}
@@ -497,30 +324,11 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
                   handleShutdownClick(e);
                 }
               }}
-              style={{
-                position: 'absolute',
-                bottom: '24px',
-                left: '32px',
-                display: 'flex',
-                gap: '12px',
-                alignItems: 'center',
-                cursor: 'pointer',
-              }}
             >
               <div
+                className="boot-login-off"
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  background: 'linear-gradient(180deg, #f04e3a 0%, #c41e0a 100%)',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1px solid #7a0c00',
-                  boxShadow:
-                    'inset 1px 1px 1px rgba(255,255,255,0.4), 1px 1px 3px rgba(0,0,0,0.4)',
                   transform: shutdownClicks > 0 ? 'scale(0.95)' : 'scale(1)',
-                  transition: 'transform 0.1s',
                 }}
               >
                 <svg
@@ -531,20 +339,12 @@ export default function BootScreen({ onComplete }: BootScreenProps) {
                   stroke="white"
                   strokeWidth="3"
                   strokeLinecap="round"
+                  aria-hidden
                 >
                   <path d="M12 2v10M18.36 6.64a9 9 0 1 1-12.73 0" />
                 </svg>
               </div>
-              <span
-                style={{
-                  color: '#fff',
-                  fontSize: '14px',
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.6)',
-                  transition: 'all 0.3s',
-                }}
-              >
-                {shutdownMessages[shutdownClicks]}
-              </span>
+              <span>{shutdownMessages[shutdownClicks]}</span>
             </div>
           </motion.div>
         )}

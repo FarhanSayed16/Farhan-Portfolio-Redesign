@@ -272,7 +272,7 @@ function ProfileScreen() {
               width: 40,
               height: 40,
               objectFit: 'cover',
-              objectPosition: '28% 16%',
+              objectPosition: 'var(--portrait-x, 47%) var(--portrait-y, 40%)',
               borderRadius: 2,
               border: '1px solid rgba(67, 217, 124, 0.45)',
               flexShrink: 0,

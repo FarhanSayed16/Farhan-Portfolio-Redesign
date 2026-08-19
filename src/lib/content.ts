@@ -22,6 +22,10 @@ export interface SiteData {
   location: string;
   availability: string;
   profileImage: string;
+  /** Circle crop on the site (CSS object-position). Tune at /tune-photo */
+  profileFocus?: { x: number; y: number; zoom?: number };
+  /** Square crop for Google / OG. Tune separately at /tune-photo */
+  squareFocus?: { x: number; y: number; zoom?: number };
   resumeUrl: string;
   metaDescription: string;
   socialLinks: {

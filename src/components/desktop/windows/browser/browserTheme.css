@@ -729,10 +729,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Landscape source: face centroid ~47% — keep that in the circle, not the left wall */
-  object-position: 47% 40%;
+  object-position: var(--portrait-x, 47%) var(--portrait-y, 40%);
   display: block;
-  transform: scale(1.05);
+  transform: scale(var(--portrait-zoom, 1.05));
 }
 
 .bv-portrait-fallback {
