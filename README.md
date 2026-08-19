@@ -72,7 +72,7 @@ docs/                  # Design / rebuild plans (internal)
 
 **Edit portfolio copy** in `data/content/*.json` — not hard-coded components where content lives in JSON.
 
-Brand mark (FS logo): `public/images/brand/fs-logo.png`. Regenerate icons:
+- **Tune portraits:** open `/tune-photo` (not linked in the nav). Drag the **site circle** and **Google square** separately, copy both JSON lines into `data/content/site.json`, then `npm run gen:portrait-square`.
 
 ```bash
 npm run gen:favicon

@@ -6,6 +6,8 @@
   "location": "Mumbai, India",
   "availability": "Available for opportunities",
   "profileImage": "/images/farhan.jpeg",
+  "profileFocus": { "x": 26, "y": 42, "zoom": 1.06 },
+  "squareFocus": { "x": 33, "y": 0, "zoom": 1.11 },
   "resumeUrl": "/resume.pdf",
   "metaDescription": "Farhan Sayed (Farhan Builds) — AI & Full-Stack Engineer in Mumbai. Smart India Hackathon 2025 National Winner. Government platforms, robotics, and production AI systems. Portfolio & contact.",
   "socialLinks": {

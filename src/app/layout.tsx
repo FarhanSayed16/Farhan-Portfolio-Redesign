@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { CSSProperties, ReactNode } from 'react';
 import { Space_Grotesk, JetBrains_Mono, Press_Start_2P, Outfit, Syne } from 'next/font/google';
 import './globals.css';
 import SecurityClient from '@/components/shared/SecurityClient';
@@ -121,15 +122,24 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
 };
 
+const portrait = siteJson.profileFocus;
+
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html
       lang="en"
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} ${pressStart2P.variable} ${outfit.variable} ${syne.variable}`}
+      style={
+        {
+          '--portrait-x': `${portrait.x}%`,
+          '--portrait-y': `${portrait.y}%`,
+          '--portrait-zoom': String(portrait.zoom),
+        } as CSSProperties
+      }
     >
       <body>
         {children}
