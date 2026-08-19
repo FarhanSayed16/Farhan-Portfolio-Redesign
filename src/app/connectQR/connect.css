@@ -162,9 +162,9 @@ body.cq-unlocked {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 47% 40%;
-  transform: scale(1.06);
-  transform-origin: 47% 40%;
+  object-position: var(--portrait-x, 47%) var(--portrait-y, 40%);
+  transform: scale(var(--portrait-zoom, 1.05));
+  transform-origin: var(--portrait-x, 47%) var(--portrait-y, 40%);
   display: block;
 }
 

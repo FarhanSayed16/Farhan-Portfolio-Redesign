@@ -24,6 +24,328 @@
 
 .boot-screen--login {
   cursor: default;
+  overflow: auto;
+}
+
+.boot-login {
+  flex: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #5a7edc;
+  position: relative;
+  font-family: Tahoma, 'Segoe UI', sans-serif;
+  padding: 108px 16px 96px;
+  box-sizing: border-box;
+}
+
+.boot-login-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100px;
+  pointer-events: none;
+}
+
+.boot-login-bar--top {
+  top: 0;
+  background: linear-gradient(180deg, #1c3280 0%, #2954ab 100%);
+}
+
+.boot-login-bar--bot {
+  bottom: 0;
+  background: linear-gradient(180deg, #4b71d6 0%, #1c3280 100%);
+}
+
+.boot-login-glow {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 20px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(133, 162, 242, 0.15) 20%,
+    rgba(133, 162, 242, 0.15) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.boot-login-glow::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent 0%, #85a2f2 20%, #85a2f2 80%, transparent 100%);
+  opacity: 0.6;
+}
+
+.boot-login-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  z-index: 1;
+}
+
+.boot-login-brand {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 40px;
+}
+
+.boot-login-wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.boot-login-farhan {
+  font-size: 36px;
+  font-weight: 700;
+  font-style: italic;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.boot-login-os {
+  font-size: 36px;
+  font-weight: 400;
+  color: #ffb900;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.boot-login-prompt {
+  font-size: 14px;
+  color: #e0e5f5;
+  margin-top: 4px;
+}
+
+.boot-login-rule {
+  width: 1px;
+  height: 180px;
+  background: linear-gradient(180deg, transparent 0%, #fff 50%, transparent 100%);
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.boot-login-user {
+  flex: 1;
+  padding-left: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.boot-login-tile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.boot-login-avatar {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  background: #fff;
+  border-top: 2px solid #ffb900;
+  border-left: 2px solid #ffb900;
+  border-right: 2px solid #a67800;
+  border-bottom: 2px solid #a67800;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.boot-login-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.boot-login-passrow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.boot-login-pass {
+  padding: 8px 8px;
+  border: 1px solid #000;
+  border-top-color: #808080;
+  border-left-color: #808080;
+  border-bottom-color: #fff;
+  border-right-color: #fff;
+  background: #fff;
+  font-size: 12px;
+  width: 160px;
+  min-height: 36px;
+  color: #000;
+  font-family: Tahoma, sans-serif;
+  cursor: not-allowed;
+}
+
+.boot-login-go {
+  background: linear-gradient(180deg, #387bd5 0%, #20509a 100%);
+  border: 1px solid #14356a;
+  border-radius: 3px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.4), 1px 1px 2px rgba(0, 0, 0, 0.3);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.boot-login-go-label {
+  display: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: Tahoma, sans-serif;
+}
+
+.boot-login-role {
+  font-size: 11px;
+  color: #c0c8e0;
+  letter-spacing: 0.5px;
+}
+
+.boot-login-shutdown {
+  position: absolute;
+  bottom: 24px;
+  left: 32px;
+  z-index: 2;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.boot-login-off {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(180deg, #f04e3a 0%, #c41e0a 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #7a0c00;
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.4), 1px 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .boot-screen--login {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .boot-login {
+    justify-content: flex-start;
+    padding: 72px 16px 88px;
+  }
+
+  .boot-login-bar {
+    height: 52px;
+  }
+
+  .boot-login-glow {
+    display: none;
+  }
+
+  .boot-login-row {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .boot-login-brand {
+    align-items: center;
+    padding-right: 0;
+  }
+
+  .boot-login-farhan,
+  .boot-login-os {
+    font-size: 28px;
+  }
+
+  .boot-login-rule {
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+  }
+
+  .boot-login-user {
+    padding-left: 0;
+    align-items: center;
+    width: 100%;
+  }
+
+  .boot-login-tile {
+    flex-direction: column;
+  }
+
+  .boot-login-passrow {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .boot-login-pass {
+    flex: 1 1 140px;
+    max-width: 220px;
+    min-height: 44px;
+  }
+
+  .boot-login-go {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .boot-login-go-label {
+    display: inline;
+  }
+
+  .boot-login-shutdown {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 28px;
+    justify-content: center;
+  }
 }
 
 /* ── Power / standby ─────────────────────────────────────────── */
