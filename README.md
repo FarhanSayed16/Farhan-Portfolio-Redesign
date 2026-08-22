@@ -72,7 +72,7 @@ docs/                  # Design / rebuild plans (internal)
 
 **Edit portfolio copy** in `data/content/*.json` — not hard-coded components where content lives in JSON.
 
-- **Tune portraits:** open `/tune-photo` (not linked in the nav). Drag the **site circle** and **Google square** separately, copy both JSON lines into `data/content/site.json`, then `npm run gen:portrait-square`.
+- **Tune assets:** open `/tune-photo` (not linked). Drag **site circle**, **Google square**, and **FS logo** separately, copy all three JSON lines into `data/content/site.json`, then `npm run gen:portrait-square` and `npm run gen:favicon`.
 
 ```bash
 npm run gen:favicon
