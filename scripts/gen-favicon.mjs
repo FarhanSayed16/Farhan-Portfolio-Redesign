@@ -1,26 +1,26 @@
 /**
  * Generate favicon PNG/ICO set from the official FS brand mark.
- * Source: public/images/brand/fs-logo.png
- * Run: node scripts/gen-favicon.mjs
+ * Source: public/images/brand/fs-logo.png — layout from site.json logoFocus.
+ * Run: npm run gen:favicon
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { logoLayout } from './lib/focus-crop.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 const brandPath = join(root, 'public', 'images', 'brand', 'fs-logo.png');
 const outDir = join(root, 'public');
-// Next.js App Router prefers src/app/favicon.ico over public/ — must stay in sync
 const appDir = join(root, 'src', 'app');
+const site = JSON.parse(readFileSync(join(root, 'data/content/site.json'), 'utf8'));
+const logoFocus = site.logoFocus ?? { x: 50, y: 50, scale: 1, pad: 0.08 };
 
-// Solid black — gold mark needs contrast in Google's light SERP / tab chips
 const BLACK = { r: 0, g: 0, b: 0, alpha: 1 };
 
-async function png(size, name, { pad = 0.08 } = {}) {
-  // Slight padding so the orbit ring survives Google's circular crop
-  const inner = Math.round(size * (1 - pad * 2));
+async function png(size, name) {
+  const { inner, left, top } = logoLayout(size, logoFocus);
   const mark = await sharp(brandPath)
     .resize(inner, inner, { fit: 'contain', background: BLACK })
     .png()
@@ -29,7 +29,7 @@ async function png(size, name, { pad = 0.08 } = {}) {
   const buf = await sharp({
     create: { width: size, height: size, channels: 4, background: BLACK },
   })
-    .composite([{ input: mark, gravity: 'centre' }])
+    .composite([{ input: mark, left, top }])
     .png()
     .toBuffer();
 
@@ -68,18 +68,18 @@ function icoFromPngs(pngBuffersWithSizes) {
 }
 
 const sizes = [
-  { size: 16, name: 'favicon-16.png', pad: 0.06 },
-  { size: 32, name: 'favicon-32.png', pad: 0.07 },
-  { size: 48, name: 'favicon-48.png', pad: 0.08 },
-  { size: 96, name: 'favicon-96.png', pad: 0.08 },
-  { size: 180, name: 'apple-touch-icon.png', pad: 0.06 },
-  { size: 192, name: 'icon-192.png', pad: 0.06 },
-  { size: 512, name: 'icon-512.png', pad: 0.05 },
+  { size: 16, name: 'favicon-16.png' },
+  { size: 32, name: 'favicon-32.png' },
+  { size: 48, name: 'favicon-48.png' },
+  { size: 96, name: 'favicon-96.png' },
+  { size: 180, name: 'apple-touch-icon.png' },
+  { size: 192, name: 'icon-192.png' },
+  { size: 512, name: 'icon-512.png' },
 ];
 
 const icoParts = [];
-for (const { size, name, pad } of sizes) {
-  const buf = await png(size, name, { pad });
+for (const { size, name } of sizes) {
+  const buf = await png(size, name);
   console.log('wrote', name, buf.length);
   if ([16, 32, 48].includes(size)) icoParts.push({ size, buf });
 }
@@ -89,8 +89,7 @@ writeFileSync(join(outDir, 'favicon.ico'), ico);
 writeFileSync(join(appDir, 'favicon.ico'), ico);
 console.log('wrote public/favicon.ico + src/app/favicon.ico', ico.length);
 
-// SVG wrapper (browsers that prefer vector still get the official mark)
-const master512 = await png(512, 'icon-512.png', { pad: 0.05 });
+const master512 = await png(512, 'icon-512.png');
 const b64 = master512.toString('base64');
 const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FS — Farhan Sayed">
@@ -116,7 +115,6 @@ const manifest = {
 writeFileSync(join(outDir, 'site.webmanifest'), JSON.stringify(manifest, null, 2));
 console.log('wrote site.webmanifest');
 
-// App Router metadata files (these override the create-next-app Vercel triangle)
 const icon192 = readFileSync(join(outDir, 'icon-192.png'));
 const apple = readFileSync(join(outDir, 'apple-touch-icon.png'));
 writeFileSync(join(appDir, 'icon.png'), icon192);
