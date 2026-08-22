@@ -26,6 +26,8 @@ export interface SiteData {
   profileFocus?: { x: number; y: number; zoom?: number };
   /** Square crop for Google / OG. Tune separately at /tune-photo */
   squareFocus?: { x: number; y: number; zoom?: number };
+  /** FS favicon layout. Tune at /tune-photo, then npm run gen:favicon */
+  logoFocus?: { x: number; y: number; scale?: number; pad?: number };
   resumeUrl: string;
   metaDescription: string;
   socialLinks: {
