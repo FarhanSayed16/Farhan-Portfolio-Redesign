@@ -126,10 +126,10 @@ export function GameOverlay({ onHire }: GameOverlayProps) {
               textShadow: '1px 1px 0 rgba(0,0,0,0.4)',
             }}
           >
-            Victory!
+            Plot twist!
           </div>
           <div style={{ padding: 16, fontSize: 12, lineHeight: 1.5, textAlign: 'center' }}>
-            <p style={{ margin: '0 0 14px' }}>{overlay.text}</p>
+            <p style={{ margin: '0 0 14px', whiteSpace: 'pre-line' }}>{overlay.text}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
               <button
                 type="button"

@@ -114,7 +114,11 @@ export const portfolioData = {
     'Level clear! Projects shipped that matter.',
     `Underground clear! ${stats.skillCount}+ tech tools touched.`,
   ],
-  bossDefeat: `World complete. ${siteData.name} — ${siteData.tagline}. Ready to ship for you.`,
+  bossDefeat: `Plot twist — you're not just beating a boss screen.
+
+You played through my projects, collected the skills, and stayed till the end. Be honest: I caught your attention, didn't I?
+
+If this journey felt fun, imagine what ${siteData.name.split(' ')[0]} would ship on your team.`,
 };
 
 // Draw bag: no-repeat until every skill has been shown once, then reshuffle.

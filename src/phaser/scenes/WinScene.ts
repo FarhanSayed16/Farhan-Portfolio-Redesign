@@ -30,6 +30,14 @@ export default class WinScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
+      .text(width / 2, height / 2 - 12, 'You actually played till the end.', {
+        fontFamily: '"Press Start 2P", monospace',
+        fontSize: '8px',
+        color: '#78f878',
+      })
+      .setOrigin(0.5);
+
+    this.add
       .text(width / 2, height / 2 + 10, `SCORE: ${this.score}  COINS: ${this.coins}`, {
         fontFamily: '"Press Start 2P", monospace',
         fontSize: '12px',
