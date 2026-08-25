@@ -9,8 +9,16 @@
     "problem": "Lack of standardized disaster education and real-time response drills in educational institutions.",
     "solution": "Architected IoT sensor integration ESP32 feeding live dashboards; led end-to-end system design aligned with government disaster management frameworks for real-world deployment.",
     "impact": "Deployed as a scalable national platform for disaster readiness.",
-    "image": "/images/projects/placeholder.svg",
-    "media": [],
+    "image": "/images/projects/kavach-hero.png",
+    "media": [
+      "/images/projects/kavach-dashboard.jpg",
+      "/images/projects/kavach-teacher-dashboard.png",
+      "/images/projects/kavach-admin-analytics.png",
+      "/images/projects/kavach-teacher-analytics.png",
+      "/images/projects/kavach-student-app.jpg",
+      "/images/projects/kavach-student-actions.jpg",
+      "/images/projects/kavach-parent-app.jpg"
+    ],
     "tech": [
       "Next.js",
       "React",
@@ -24,7 +32,7 @@
       "Firebase"
     ],
     "repoUrl": null,
-    "demoUrl": null,
+    "demoUrl": "https://sih-2025-web-five.vercel.app/",
     "category": "platforms",
     "featured": true,
     "archived": false,
