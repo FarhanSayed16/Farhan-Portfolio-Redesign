@@ -39,8 +39,8 @@ export default function TunePhotoClient() {
   const [square, setSquare] = useState<Focus>(squareStart);
   const [logo, setLogo] = useState<LogoFocus>(logoStart);
 
-  const snippet = `"profileFocus": { "x": ${site.x.toFixed(0)}, "y": ${site.y.toFixed(0)}, "zoom": ${site.zoom.toFixed(2)} },
-  "squareFocus": { "x": ${square.x.toFixed(0)}, "y": ${square.y.toFixed(0)}, "zoom": ${square.zoom.toFixed(2)} },
+  const snippet = `"profileFocus": { "x": ${site.x.toFixed(0)}, "y": ${site.y.toFixed(0)}, "zoom": ${(site.zoom ?? 1).toFixed(2)} },
+  "squareFocus": { "x": ${square.x.toFixed(0)}, "y": ${square.y.toFixed(0)}, "zoom": ${(square.zoom ?? 1).toFixed(2)} },
   "logoFocus": { "x": ${logo.x.toFixed(0)}, "y": ${logo.y.toFixed(0)}, "scale": ${(logo.scale ?? 1).toFixed(2)}, "pad": ${(logo.pad ?? 0.08).toFixed(2)} }`;
 
   return (
